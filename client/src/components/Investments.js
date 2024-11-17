@@ -1,4 +1,3 @@
-// components/Investments.js
 import React, { useState, useEffect } from 'react';
 import '../styles.css';
 import { Chart } from 'chart.js/auto';
@@ -69,7 +68,7 @@ function Investments({ onNavigate }) {
         <div className="investments-page">
           <div className="investments-header">
             <h2>Community Businesses</h2>
-            <button className="enlist-business-button" onClick={() => onNavigate('enlist-business')}>
+            <button className="light-rounded-button" onClick={() => onNavigate('enlist-business')}>
               <FaPlus /> Enlist Your Business
             </button>
           </div>

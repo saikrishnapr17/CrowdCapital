@@ -1258,3 +1258,24 @@ body {
 .wallet-header h2 {
   color: #ffffff;
 }
+
+
+.light-rounded-button {
+  background-color: #7a6fee; /* A lighter shade for better visibility */
+  color: #FFFFFF;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 35px; /* Makes it rounded */
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: calc(100% - 40px); /* Adjust width to take almost full space with some padding */
+  max-width: 400px; /* Limit the width to 400px on larger screens */
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for a nice effect */
+  margin: 0 auto; /* Center the button */
+}
+
+.light-rounded-button:hover {
+  background-color: #6359E9; /* Darker color on hover to create a visual effect */
+}

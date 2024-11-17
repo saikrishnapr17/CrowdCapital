@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TransactionsTable from './TransactionsTable';
 import '../styles.css';
-import { FaArrowUp, FaArrowDown, FaTimes, FaCamera } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 function MyWallet({ onNavigate, user_id }) {
   const [isSendMoneyVisible, setIsSendMoneyVisible] = useState(false);
@@ -85,20 +85,17 @@ function MyWallet({ onNavigate, user_id }) {
 
       if (response.ok) {
         setMessage('Money sent successfully!');
-        // Immediately update the wallet balance
         setWalletBalance(prevBalance => (Number(prevBalance) - Number(amount)).toString());
-        // Update transactions list with the new transfer
         setTransactions(prevTransactions => [
           {
             type: 'transfer',
             date: new Date().toLocaleDateString('en-US', {
               weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
             }),
-            amount: -amount, // Negative amount for sends
+            amount: -amount,
           },
           ...prevTransactions,
         ]);
-        // Clear the form
         setPhoneNumber('');
         setAmount('');
         setIsSendMoneyVisible(false);
@@ -130,7 +127,6 @@ function MyWallet({ onNavigate, user_id }) {
 
       if (response.ok) {
         setDepositMessage('Deposit successful!');
-        // Immediately update the wallet balance
         setWalletBalance(prevBalance => (Number(prevBalance) + Number(depositAmount)).toString());
         setTransactions(prevTransactions => [
           {
@@ -142,7 +138,6 @@ function MyWallet({ onNavigate, user_id }) {
           },
           ...prevTransactions,
         ]);
-        // Clear the form
         setDepositAmount('');
         setIsDepositVisible(false);
       } else {
@@ -161,6 +156,8 @@ function MyWallet({ onNavigate, user_id }) {
       <div className="wallet-header">
         <h1>My Wallet</h1>
       </div>
+      
+      {/* Balance Card Section */}
       <div className="balance-section">
         <div className="balance-card">
           <h2>Balance: ${walletBalance}</h2>
@@ -171,29 +168,6 @@ function MyWallet({ onNavigate, user_id }) {
             <button className="wallet-action-button" onClick={handleDepositClick}>
               <FaArrowDown /> Deposit
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Credit Score Section */}
-      <div className="credit-score-section">
-        <div className="credit-score-card">
-          <h3 className="credit-score-header">Credit Score</h3>
-          <div className="credit-score-display">
-            <div className="credit-score-value">
-              <p>{creditScore}</p>
-              <span>Fair</span>
-            </div>
-            <div className="credit-score-meter">
-              <div
-                className="credit-score-bar"
-                style={{
-                  background: creditScore >= 720 ? '#4caf50' : creditScore >= 660 ? '#ffeb3b' : '#ff5722',
-                  width: `${((creditScore - 300) / 550) * 100}%`
-                }}
-              ></div>
-            </div>
-            <p className="credit-score-points">▲ 11 pts</p>
           </div>
         </div>
       </div>
@@ -239,47 +213,35 @@ function MyWallet({ onNavigate, user_id }) {
         </div>
       )}
 
-      {/* Deposit Section */}
-      {isDepositVisible && (
-        <div className="send-money-section">
-          <h3>Deposit Money</h3>
-          <div className="send-money-form">
-            <button className="wallet-action-button">
-              <FaCamera /> Scan Check
-            </button>
-            <label>
-              <input
-                type="number"
-                placeholder="Enter the Amount ($)"
-                value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
-              />
-            </label>
-            <div className="contribute-actions">
-              <button
-                className="contribute-button submit"
-                onClick={handleConfirmDepositClick}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Depositing...' : 'Submit'}
-              </button>
-              <button
-                className="contribute-button cancel"
-                onClick={() => setIsDepositVisible(false)}
-              >
-                Cancel
-              </button>
+      {/* Credit Score Section */}
+      <div className="credit-score-section">
+        <div className="credit-score-card">
+          <h3 className="credit-score-header">Credit Score</h3>
+          <div className="credit-score-display">
+            <div className="credit-score-value">
+              <p>{creditScore}</p>
+              <span>Fair</span>
             </div>
-            {depositMessage && <p className="send-money-message">{depositMessage}</p>}
+            <div className="credit-score-meter">
+              <div
+                className="credit-score-bar"
+                style={{
+                  background: creditScore >= 720 ? '#4caf50' : creditScore >= 660 ? '#ffeb3b' : '#ff5722',
+                  width: `${((creditScore - 300) / 550) * 100}%`
+                }}
+              ></div>
+            </div>
+            <p className="credit-score-points">▲ 11 pts</p>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Transactions Section */}
       <div className="wallet-transactions-section">
         <h2>Recent Transactions</h2>
         <div className="transactions-scrollable">
-            <TransactionsTable transactions={transactions} />
+          <TransactionsTable transactions={transactions} />
         </div>
       </div>
     </div>
