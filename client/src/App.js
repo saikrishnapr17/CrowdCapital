@@ -1,3 +1,4 @@
+// App.js
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -7,6 +8,8 @@ import TransactionsTable from './components/TransactionsTable';
 import MyWallet from './components/MyWallet';
 import SMSFraudCheck from './components/SMSFraudCheck';
 import Investments from './components/Investments';
+import Community from './components/Community';
+import Contribute from './components/Contribute'; // Import Contribute component
 import './styles.css';
 
 function App() {
@@ -46,6 +49,8 @@ function App() {
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} />}
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
         {activePage === 'investments' && <Investments />}
+        {activePage === 'community' && <Community onNavigate={handlePageChange} />}
+        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} />}
       </div>
     </div>
   );
