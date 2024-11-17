@@ -5,9 +5,6 @@ import '../styles.css';
 function Community({ onNavigate }) {
   return (
     <div className="community-page">
-      <div className="navbar">
-        <button className="close-button" onClick={() => onNavigate('dashboard')}>X</button>
-      </div>
       <h2 className="community-header">Community</h2>
       <div className="community-card">
         <h3 className="community-heading">Amount</h3>
