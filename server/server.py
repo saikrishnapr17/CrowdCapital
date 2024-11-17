@@ -3,6 +3,7 @@ from flask_cors import CORS
 from firebase_admin import credentials, firestore, initialize_app
 import firebase_admin
 import os
+import statistics
 
 app = Flask(__name__)
 
@@ -74,6 +75,55 @@ def get_users():
     doc = user_ref.get()
     
     return jsonify(doc.to_dict())
+
+@app.route('/credit/<user_id>')
+def get_user_credit(user_id):
+    transactions = get_transactions_by_user(user_id)
+    user = get_users()
+    rate = user["repayment_rate"]
+    social = user["community_rating"]
+    transaction_count = len(transactions)
+    max_transactions_per_month = 30
+    frequency_score = (transaction_count / max_transactions_per_month) * 100
+    repayment_score = user['repayment_rate']
+    amounts = [tx['amount'] for tx in transactions]
+    if len(amounts) > 1:
+        # Calculate standard deviation of transaction amounts
+        transaction_stdev = statistics.stdev(amounts)
+        # Inverse of standard deviation (scaled)
+        transaction_stability_score = (1 / (1 + transaction_stdev)) * 100
+    else:
+        transaction_stability_score = 100 
+    total_transaction_amount = sum(amounts)
+    savings_score = (total_transaction_amount * 0.20) / total_transaction_amount * 100
+    community_score = user['community_rating'] * 10
+    total_debt = user['avg_income']
+    total_income = user['current_debt']
+    debt_to_income_ratio = total_debt / total_income
+    debt_to_income_score = max(0, 100 - (debt_to_income_ratio * 100))
+
+    weights = {
+        'frequency': 0.25,
+        'repayment': 0.30,
+        'stability': 0.15,
+        'savings': 0.10,
+        'community': 0.10,
+        'debt_to_income': 0.10
+    }
+
+    # Calculate final credit score
+    final_credit_score = (
+        frequency_score * weights['frequency'] +
+        repayment_score * weights['repayment'] +
+        transaction_stability_score * weights['stability'] +
+        savings_score * weights['savings'] +
+        community_score * weights['community'] +
+        debt_to_income_score * weights['debt_to_income']
+    )
+
+    return jsonify({
+        'credit_score': final_credit_score
+    })
 
 
 if __name__ == '__main__':
