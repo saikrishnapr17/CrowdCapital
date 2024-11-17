@@ -1,28 +1,36 @@
-// components/Sidebar.js
 import React from 'react';
+import '../styles.css';
+
+import { FaHome, FaWallet, FaChartLine, FaPiggyBank } from 'react-icons/fa';
 
 function Sidebar({ isOpen, onNavigate }) {
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <h2>uifry</h2>
-      <ul>
-        <li onClick={() => onNavigate('dashboard')}>Dashboard</li>
-        <li onClick={() => onNavigate('investments')}>My Investments</li>
-        <li onClick={() => onNavigate('my-wallet')}>My Wallet</li>
-        <li onClick={() => onNavigate('sms-fraud-check')}>SMS Fraud Check</li>
-        <li onClick={() => onNavigate('accounts')}>Accounts</li>
-        <li onClick={() => onNavigate('settings')}>Settings</li>
-        <li onClick={() => onNavigate('security')}>Security</li>
-        <li onClick={() => onNavigate('help')}>Help Centre</li>
-        <li>Dark Mode</li>
-      </ul>
-      <div className="user-info">
-        <img src="/path/to/user-image.png" alt="User" />
-        <p>Ali Riaz</p>
-        <p>Web Developer</p>
+      <div className="sidebar-header">
+        
       </div>
+      <ul className="sidebar-menu">
+        <li className="sidebar-item" onClick={() => onNavigate('dashboard')}>
+          <FaHome className="sidebar-icon" />
+          <span>Dashboard</span>
+        </li>
+        <li className="sidebar-item" onClick={() => onNavigate('my-wallet')}>
+          <FaWallet className="sidebar-icon" />
+          <span>My Wallet</span>
+        </li>
+        <li className="sidebar-item" onClick={() => onNavigate('investments')}>
+          <FaPiggyBank className="sidebar-icon" />
+          <span>Investments</span>
+        </li>
+        <li className="sidebar-item" onClick={() => onNavigate('sms-fraud-check')}>
+          <FaChartLine className="sidebar-icon" />
+          <span>SMS Fraud Check</span>
+        </li>
+      </ul>
+      
     </div>
   );
 }
 
 export default Sidebar;
+
