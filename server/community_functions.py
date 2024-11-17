@@ -224,6 +224,7 @@ def make_loan_payment(user_id, payment_amount):
     if payment_amount > total_loan_balance:
         raise ValueError("Payment amount exceeds total loan balance")
 
+
     # Distribute payment across loans
     for loan in loans_to_update:
         loan_ref = db.collection("loans").document(loan["loan_id"])
