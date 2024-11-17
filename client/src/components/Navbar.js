@@ -1,13 +1,16 @@
 // components/Navbar.js
 import React from 'react';
 
-function Navbar() {
+function Navbar({ toggleSidebar }) {
   return (
     <div className="navbar">
-      <h1>Welcome Back, Ali 👋</h1>
-      <input type="text" placeholder="Search for anything..." />
+      <button className="hamburger-menu" onClick={toggleSidebar}>
+        &#9776;
+      </button>
+      {/* Add any additional navbar content here */}
     </div>
   );
 }
+
 
 export default Navbar;
