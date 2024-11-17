@@ -8,7 +8,6 @@ function Investments({ onNavigate, userId }) {
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [investingBusiness, setInvestingBusiness] = useState(null);
   const [investmentAmount, setInvestmentAmount] = useState('');
-  const [userInvestment, setUserInvestment] = useState(0);
   const chartInstanceRef = useRef(null);
 
   useEffect(() => {
@@ -31,63 +30,69 @@ function Investments({ onNavigate, userId }) {
 
   useEffect(() => {
     if (selectedBusiness) {
-      const ctx = document.getElementById('equityChart');
+      renderChart(selectedBusiness);
+    }
+  }, [selectedBusiness]);
 
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-      }
+  const renderChart = (business) => {
+    const ctx = document.getElementById('equityChart');
 
-      if (ctx) {
-        const remainingAmount = selectedBusiness.goal - selectedBusiness.equity - userInvestment;
-        
-        chartInstanceRef.current = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: ['Total Equity', 'Your Investment', 'Remaining Goal'],
-            datasets: [{
-              data: [
-                selectedBusiness.equity - userInvestment, // Other investors' equity
-                userInvestment, // User's investment
-                remainingAmount // Remaining goal
-              ],
-              backgroundColor: ['#6359E9', '#FF4444', '#1d1d41'],
-              borderWidth: 0,
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'bottom',
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    let label = context.label || '';
-                    if (label) {
-                      label += ': ';
-                    }
-                    label += '$' + context.raw.toFixed(2);
-                    return label;
-                  }
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.destroy();
+    }
+
+    if (ctx) {
+      const userInvestment = business.stakeholders.find(stake => stake.user_id === userId)?.amount_invested || 0;
+      const othersInvestment = business.stakeholders.reduce((total, stake) => {
+        if (stake.user_id !== userId) {
+          return total + stake.amount_invested;
+        }
+        return total;
+      }, 0);
+      const remainingAmount = business.remaining_amount;
+
+      chartInstanceRef.current = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Your Investment', 'Others', 'Remaining Goal'],
+          datasets: [{
+            data: [userInvestment, othersInvestment, remainingAmount],
+            backgroundColor: ['#FF4444', '#6359E9', '#1d1d41'],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = context.raw;
+                  const total = business.goal;
+                  const percentage = ((value / total) * 100).toFixed(2);
+                  return `${context.label}: $${value} (${percentage}%)`;
                 }
               }
             }
           }
-        });
-      }
+        }
+      });
     }
-  }, [selectedBusiness, userInvestment]);
+  };
 
   const handleBusinessClick = (business) => {
     setSelectedBusiness(business);
-    setUserInvestment(0); // Reset user investment when selecting new business
   };
 
   const handleBackClick = () => {
     setSelectedBusiness(null);
-    setUserInvestment(0);
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.destroy();
+    }
   };
 
   const handleInvestClick = (business) => {
@@ -97,11 +102,14 @@ function Investments({ onNavigate, userId }) {
   const handleCancelInvest = () => {
     setInvestingBusiness(null);
     setInvestmentAmount('');
+    if (selectedBusiness) {
+      renderChart(selectedBusiness);  // Reload the chart when canceling investment
+    }
   };
 
   const handleConfirmInvest = async () => {
     if (!investmentAmount) {
-      alert('Please enter an amount to invest.');
+      console.error('Please enter an amount to invest.');
       return;
     }
 
@@ -119,37 +127,28 @@ function Investments({ onNavigate, userId }) {
 
       if (response.ok) {
         const data = await response.json();
-        // Update the selected business with new values
-        setSelectedBusiness(prevBusiness => ({
-          ...prevBusiness,
-          equity: data.result.business.total_equity,
-          goal: data.result.business.total_equity + data.result.business.remaining_amount
-        }));
-        // Set the user's investment amount
-        setUserInvestment(Number(investmentAmount));
-        // Update businesses list
-        setBusinesses(prevBusinesses => 
-          prevBusinesses.map(business => 
-            business.business_id === investingBusiness.business_id 
-              ? {
-                  ...business,
-                  equity: data.result.business.total_equity,
-                  goal: data.result.business.total_equity + data.result.business.remaining_amount
-                }
-              : business
-          )
-        );
-        alert(data.message);
+        const updatedBusiness = data.result.business;
+        setBusinesses(prevBusinesses => prevBusinesses.map(b => b.business_id === updatedBusiness.business_id ? updatedBusiness : b));
+        setSelectedBusiness(updatedBusiness);
+        renderChart(updatedBusiness);
         setInvestingBusiness(null);
         setInvestmentAmount('');
       } else {
         const errorData = await response.json();
-        alert(errorData.error);
+        console.error(errorData.error);
       }
     } catch (error) {
       console.error('Error making investment:', error);
-      alert('An error occurred. Please try again.');
     }
+  };
+
+  const getCurrentUserInvestment = () => {
+    if (!selectedBusiness) return null;
+    const userStake = selectedBusiness.stakeholders.find(stake => stake.user_id === userId);
+    return userStake ? {
+      amount: userStake.amount_invested,
+      equity: userStake.equity
+    } : null;
   };
 
   return (
@@ -188,18 +187,22 @@ function Investments({ onNavigate, userId }) {
             <p className="subheading">{selectedBusiness.business_name}</p>
 
             <h2>Owner Name</h2>
-            <p className="subheading">{selectedBusiness.owner_name || "Placeholder for Owner's Name"}</p>
+            <p className="subheading">{selectedBusiness.owner_name}</p>
 
             <h2>Description</h2>
-            <p className="subheading">{selectedBusiness.description || 'Placeholder for Business Description'}</p>
+            <p className="subheading">{selectedBusiness.description}</p>
 
             <h2>Goal/Equity Offered</h2>
+            <p className="investment-goal">Investment Goal: ${selectedBusiness.goal}</p>
             <div id="chart-container">
               <canvas id="equityChart"></canvas>
             </div>
             
-            {userInvestment > 0 && (
-              <p className="investment-info">Your Investment: ${userInvestment.toFixed(2)}</p>
+            {getCurrentUserInvestment() && (
+              <div className="investment-info">
+                <p>Your Investment: ${getCurrentUserInvestment().amount.toFixed(2)}</p>
+                <p>Your Equity: {getCurrentUserInvestment().equity.toFixed(2)}%</p>
+              </div>
             )}
 
             <button className="invest-button" onClick={() => handleInvestClick(selectedBusiness)}>
