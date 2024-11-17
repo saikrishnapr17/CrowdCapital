@@ -5,12 +5,10 @@ function Navbar({ toggleSidebar }) {
   return (
     <div className="navbar">
       <button className="hamburger-menu" onClick={toggleSidebar}>
-        &#9776;
+        &#9776; {/* Hamburger icon */}
       </button>
-      {/* Add any additional navbar content here */}
     </div>
   );
 }
-
 
 export default Navbar;

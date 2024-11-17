@@ -14,20 +14,20 @@ body {
 }
 
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 100%;
+  width: 300px; /* Sidebar width */
   background-color: #EDE8F5;
   padding: 20px;
-  box-sizing: border-box; /* Include padding in width */
-  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  top: 0;
+  left: -340px; /* Move it further left to hide completely (300px width + 20px padding on both sides) */
+  height: 100%;
+  transition: left 0.3s ease;
   z-index: 1000;
-  overflow-y: auto;
-  margin: 0;
-  border: none;
-  transform: translateX(-100%); /* Start off-screen */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+}
+
+.sidebar.open {
+  left: 0; /* Align with the left edge when open */
 }
 
 .sidebar.visible {
@@ -55,11 +55,13 @@ body {
 .main-content.shifted {
   margin-left: 300px; 
 }
+
 .hamburger-menu {
   background: none;
   border: none;
   font-size: 24px;
   cursor: pointer;
+  z-index: 1500;
 }
 
 .navbar {
@@ -115,8 +117,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 430px; /* Match viewport width */
+  width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent */
-  z-index: 999; /* Below the sidebar */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
 }

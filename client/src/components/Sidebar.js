@@ -1,13 +1,9 @@
 // components/Sidebar.js
 import React from 'react';
 
-function Sidebar({ isVisible, onClose }) {
+function Sidebar({ isOpen }) {
   return (
-    
-    <div className={`sidebar ${isVisible ? 'visible' : 'hidden'}`}>
-      {isVisible && (
-        <button className="close-button" onClick={onClose}>✖</button>
-      )}
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <h2>uifry</h2>
       <ul>
         <li>Dashboard</li>
@@ -21,7 +17,7 @@ function Sidebar({ isVisible, onClose }) {
       </ul>
       <div className="user-info">
         <img src="/path/to/user-image.png" alt="User" />
-        <p>Rama Riaz</p>
+        <p>Ali Riaz</p>
         <p>Web Developer</p>
       </div>
     </div>

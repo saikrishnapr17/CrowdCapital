@@ -8,25 +8,19 @@ import TransactionsTable from './components/TransactionsTable';
 import './styles.css';
 
 function App() {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Menu is closed initially
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleMenuClick = () => {
-    setIsSidebarVisible(true);
-  };
-
-  const handleCloseSidebar = () => {
-    setIsSidebarVisible(false);
+  // Toggle function to open/close sidebar
+  const toggleSidebar = () => {
+    setSidebarOpen(prevState => !prevState);
   };
 
   return (
     <div className="app-container">
-      <Sidebar isVisible={isSidebarVisible} onClose={handleCloseSidebar} />
-
-      {/* Overlay */}
-      {isSidebarVisible && <div className="overlay" onClick={handleCloseSidebar}></div>}
-
-      <div className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
-        <Navbar onMenuClick={handleMenuClick} />
+      <Sidebar isOpen={sidebarOpen} />
+      {sidebarOpen && <div className="overlay" onClick={toggleSidebar}></div>}
+      <div className="main-content">
+        <Navbar toggleSidebar={toggleSidebar} />
         <div className="dashboard-cards">
           <DashboardCard title="Total Income" amount="$632,000" percentage={1.29} />
           <DashboardCard title="Total Outcome" amount="$632,000" percentage={-1.29} />
