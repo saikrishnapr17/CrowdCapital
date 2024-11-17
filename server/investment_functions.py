@@ -25,10 +25,10 @@ def enlist_business(owner_id, business_name, description, goal, equity):
     db.collection("businesses").document(business_id).set(business_data)
     return business_data
 
-
 def invest_in_business(user_id, business_id, amount_invested):
     """
-    Allows a user to invest in a business, updates their equity, and records the transaction.
+    Allows a user to invest in a business and updates their equity stake.
+    Equity is calculated proportionally based on the total investment goal.
     """
     # Fetch business details
     business_ref = db.collection("businesses").document(business_id)
@@ -45,25 +45,32 @@ def invest_in_business(user_id, business_id, amount_invested):
     if not owner_id:
         raise ValueError("Business owner not found")
 
-    # Calculate equity for the investment
+    # Calculate equity share based on total goal and available equity
+    # Example: If goal is $100k, equity offered is 40%, and investment is $10k
+    # Then equity_share = ($10k / $100k) * 40% = 4%
     equity_share = (amount_invested / business["goal"]) * business["equity"]
 
-    # Update business details
+    # Update business remaining amount and stakeholder information
     business["remaining_amount"] -= amount_invested
+    
+    # Update or add stakeholder
     stakeholder = next((s for s in business["stakeholders"] if s["user_id"] == user_id), None)
     if stakeholder:
+        # If user has existing stake, add to their investment and equity
         stakeholder["amount_invested"] += amount_invested
         stakeholder["equity"] += equity_share
     else:
+        # Add new stakeholder
         business["stakeholders"].append({
             "user_id": user_id,
             "amount_invested": amount_invested,
             "equity": equity_share
         })
 
+    # Save updated business data
     business_ref.set(business)
 
-    # Record the investment in the investments collection
+    # Record the investment
     investment_id = str(uuid.uuid4())
     investment_data = {
         "investment_id": investment_id,
@@ -79,20 +86,17 @@ def invest_in_business(user_id, business_id, amount_invested):
     if not user:
         raise ValueError("User not found")
 
+    # Check if user has sufficient balance
     user_new_balance = user["wallet_balance"] - amount_invested
     if user_new_balance < 0:
         raise ValueError("Insufficient user balance")
 
-    new_investment_amount = user.get("investment_amount", 0) + amount_invested
-    new_equity = user.get("equity_from_investments", 0) + equity_share
-
+    # Update user's wallet balance
     update_user(user_id, {
-        "wallet_balance": user_new_balance,
-        "investment_amount": new_investment_amount,
-        "equity_from_investments": new_equity
+        "wallet_balance": user_new_balance
     })
 
-    # Record the transaction for the user, including the owner_id as target_user
+    # Record the transaction
     create_transaction(
         user_id,
         "investment",
@@ -100,7 +104,6 @@ def invest_in_business(user_id, business_id, amount_invested):
         target_user=owner_id
     )
 
-    # Return the updated business and investment details
     return {
         "message": "Investment successful",
         "business": {
