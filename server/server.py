@@ -96,57 +96,59 @@ def get_transactions_endpoint(user_id):
 def home():
     return "Hello, Flask from server.py!"
 
-@app.route('/firebase')
-def get_users():
-    user_ref = db.collection('user').document('user')  
+@app.route('/firebase/')
+def get_users(user_id):
+    user_ref = db.collection('user').document(user_id)  
     doc = user_ref.get()
-    
-    return jsonify(doc.to_dict())
+    return doc.to_dict()
 
 @app.route('/credit/<user_id>')
 def get_user_credit(user_id):
     transactions = get_transactions_by_user(user_id)
-    user = get_users()
-    rate = user["repayment_rate"]
-    social = user["community_rating"]
+    user = get_users(user_id)
     transaction_count = len(transactions)
     max_transactions_per_month = 30
-    frequency_score = (transaction_count / max_transactions_per_month) * 100
-    repayment_score = user['repayment_rate']
+    frequency_score = (transaction_count / max_transactions_per_month)
+    repayment_score = user['repayment_rate'] * 425 # 50% weights
     amounts = [tx['amount'] for tx in transactions]
     if len(amounts) > 1:
         # Calculate standard deviation of transaction amounts
         transaction_stdev = statistics.stdev(amounts)
         # Inverse of standard deviation (scaled)
-        transaction_stability_score = (1 / (1 + transaction_stdev)) * 100
+        transaction_stability_score = (1 / (1 + transaction_stdev))
     else:
         transaction_stability_score = 100 
     total_transaction_amount = sum(amounts)
-    savings_score = (total_transaction_amount * 0.20) / total_transaction_amount * 100
-    community_score = user['community_rating'] * 10
+    savings_score = (total_transaction_amount * 0.20) / total_transaction_amount
+    community_score = user['community_rating'] * 10/100
     total_debt = user['current_debt'] 
     total_income = user['avg_income'] 
     debt_to_income_ratio = total_debt / total_income
-    debt_to_income_score = max(0, 100 - (debt_to_income_ratio * 100))
+    debt_to_income_score = max(0, 1 - (debt_to_income_ratio))
 
     weights = {
-        'frequency': 0.25,
-        'repayment': 0.30,
-        'stability': 0.15,
-        'savings': 0.10,
-        'community': 0.10,
-        'debt_to_income': 0.10
+        'frequency': 42.5, # 5% weight
+        'stability': 127.5, # 15% weight
+        'savings': 85, # 10% weight
+        'community': 85, # 10% weight
+        'debt_to_income': 85 # 10% weight
     }
 
     # Calculate final credit score
     final_credit_score = (
         frequency_score * weights['frequency'] +
-        repayment_score * weights['repayment'] +
+        repayment_score +
         transaction_stability_score * weights['stability'] +
         savings_score * weights['savings'] +
         community_score * weights['community'] +
         debt_to_income_score * weights['debt_to_income']
     )
+    print(frequency_score * weights['frequency'])
+    print(repayment_score)
+    print(transaction_stability_score * weights['stability'])
+    print(savings_score * weights['savings'])
+    print(community_score * weights['community'])
+    print(debt_to_income_score * weights['debt_to_income'])
 
     return jsonify({
         'credit_score': final_credit_score
