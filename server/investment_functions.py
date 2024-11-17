@@ -40,6 +40,11 @@ def invest_in_business(user_id, business_id, amount_invested):
     if business["remaining_amount"] < amount_invested:
         raise ValueError("Investment amount exceeds remaining goal")
 
+    # Get the owner_id from the business document
+    owner_id = business.get("owner_id")
+    if not owner_id:
+        raise ValueError("Business owner not found")
+
     # Calculate equity for the investment
     equity_share = (amount_invested / business["goal"]) * business["equity"]
 
@@ -87,8 +92,14 @@ def invest_in_business(user_id, business_id, amount_invested):
         "equity_from_investments": new_equity
     })
 
-    # Record the transaction for the user
-    create_transaction(user_id, "investment", amount_invested, description=f"Invested in business {business['business_name']}")
+    # Record the transaction for the user, including the owner_id as target_user
+    create_transaction(
+        user_id,
+        "investment",
+        amount_invested,
+        description=f"Invested in business {business['business_name']}",
+        target_user=owner_id
+    )
 
     # Return the updated business and investment details
     return {
@@ -104,6 +115,7 @@ def invest_in_business(user_id, business_id, amount_invested):
             "equity_share": equity_share
         }
     }
+
 
 
 def get_business_investments(business_id):
