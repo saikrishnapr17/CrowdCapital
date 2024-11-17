@@ -294,7 +294,7 @@ def get_community_interest():
 
 def get_community_fund_details():
     """
-    Retrieves community fund details, including contributors, loans, and interest earned.
+    Retrieves community fund details, including contributors (with names), loans, and interest earned.
     """
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
@@ -302,10 +302,28 @@ def get_community_fund_details():
     if not community:
         raise ValueError("Community fund does not exist")
 
+    # Update contributors with names
+    updated_contributors = []
+    for contributor in community.get("contributors", []):
+        user = get_user_by_id(contributor["user_id"])
+        if user:
+            updated_contributors.append({
+                "name": user.get("name"),
+                "amount": contributor["amount"]
+            })
+        else:
+            updated_contributors.append({
+                "name": "Unknown User",
+                "amount": contributor["amount"]
+            })
+
+    # Replace IDs with names for contributors
+    community["contributors"] = updated_contributors
+
     # Calculate total interest earned by contributors
     total_interest_earned = 0.0
     for contributor in community.get("contributors", []):
-        user = get_user_by_id(contributor["user_id"])
+        user = get_user_by_id(contributor.get("user_id"))
         if user:
             total_interest_earned += user.get("interest_earned", 0.0)
 
