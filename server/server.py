@@ -41,7 +41,7 @@ def create_user_endpoint():
 @app.route("/users/<user_id>/deposit", methods=["POST"])
 def deposit_money_endpoint(user_id):
     data = request.json
-    amount = data["amount"]
+    amount = int(data["amount"])
 
     try:
         new_balance = deposit_money(user_id, amount)

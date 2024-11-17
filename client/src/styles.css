@@ -410,3 +410,49 @@ body {
   font-size: 16px;
   color: #0a1f44;
 }
+.send-money-section,
+.deposit-section {
+  background-color: #f0f4f8;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.send-money-form,
+.deposit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.send-money-form label,
+.deposit-form label {
+  font-size: 16px;
+  color: #0a1f44;
+}
+
+.confirm-button {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px;
+  background-color: #0a1f44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #081a37;
+}
+
+.send-money-message,
+.deposit-message {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #0a1f44;
+}
