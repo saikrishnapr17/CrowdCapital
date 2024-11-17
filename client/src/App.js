@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -6,18 +5,17 @@ import DashboardCard from './components/DashboardCard';
 import AnalyticsChart from './components/AnalyticsChart';
 import TransactionsTable from './components/TransactionsTable';
 import MyWallet from './components/MyWallet';
+import Investments from './components/Investments';
 import './styles.css';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
 
-  // Toggle function to open/close sidebar
   const toggleSidebar = () => {
     setSidebarOpen(prevState => !prevState);
   };
 
-  // Function to handle page navigation
   const handlePageChange = (page) => {
     setActivePage(page);
     setSidebarOpen(false);
@@ -45,6 +43,7 @@ function App() {
           </>
         )}
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} />}
+        {activePage === 'investments' && <Investments />}
       </div>
     </div>
   );

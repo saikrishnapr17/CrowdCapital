@@ -190,3 +190,141 @@ body {
 .back-to-dashboard-button:hover {
   background-color: #081a37;
 }
+
+
+/* Main container for the Investments page */
+.investments-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Horizontal centering */
+  justify-content: flex-start;  /* Align elements at the top */
+  min-height: 100vh;  /* Ensure it takes at least the full viewport height */
+  padding: 0 20px;  /* Add horizontal padding to ensure some space on the sides */
+  margin: 0 auto;  /* Center the entire container */
+  box-sizing: border-box;
+}
+
+/* Header styling */
+.investments-header {
+  text-align: center;
+  margin: 0 auto;  /* Center the heading */
+  padding: 0;
+  width: 100%;  /* Take full width available */
+}
+
+.investments-header h2 {
+  color: #FFFFFF;
+  font-size: 26px;  /* Slightly increase font size */
+  margin: 0 0 25px 0;  /* Adjust bottom margin for spacing */
+}
+
+/* Business list styling */
+.business-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* Center items horizontally */
+  gap: 20px;  /* Increase gap between buttons */
+  width: 100%;
+  max-width: 400px;  /* Limit the width of the list for better appearance on larger screens */
+  padding: 0;
+  margin: 0 auto;  /* Center the list */
+}
+
+/* Business button styling */
+.business-button {
+  width: 100vw;             /* Make button take full width of its parent */
+  background-color: #1d1d41;
+  color: #FFFFFF;
+  padding: 20px 0;         /* Keep padding as desired */
+  border: none;
+  border-radius: 35px;     /* Round corners */
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center text inside the button */
+  text-decoration: none;
+  margin-left: 0 auto;          /* Center the button */
+}
+
+.business-button:hover {
+  background-color: #6359E9;
+}
+
+/* Business Details Page Styling */
+.business-details-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+/* Hidden state for business details */
+.hidden {
+  display: none;
+}
+
+/* Navbar in business details */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Details content */
+.details-content {
+  width: 100%;
+  max-width: 400px;
+}
+
+.details-content h2 {
+  font-size: 24px;
+  margin: 20px 0 5px 0;
+  font-weight: bold;
+}
+
+.details-content .subheading {
+  font-size: 18px;
+  margin: 0 0 20px 0;
+}
+
+/* Pie chart container */
+#chart-container {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+/* Invest button styling */
+.invest-button {
+  width: calc(100% - 40px);  /* Set width to 100% minus 40px for margin (20px on each side) */
+  max-width: 400px;          /* Optional: Limit max width for better appearance on larger screens */
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 20px auto 0 auto;  /* Add margin to center and create spacing from top */
+  display: block;            /* Ensure the button spans the entire width */
+}
+
+.invest-button:hover {
+  background-color: #081a37;
+}
