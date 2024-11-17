@@ -1087,3 +1087,87 @@ body {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
+
+.credit-score-section {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.credit-score-card {
+  background-color: #1d1d41;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.credit-score-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.credit-score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.credit-score-value p {
+  font-size: 36px;
+  margin: 0;
+}
+
+.credit-score-value span {
+  font-size: 16px;
+}
+
+.credit-score-meter {
+  width: 80%;
+  height: 10px;
+  background-color: #555;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.credit-score-bar {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.credit-score-points {
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.powered-by {
+  font-size: 12px;
+  margin-top: 10px;
+  color: #aaa;
+}
+
+.wallet-transactions-section {
+  background-color: #1d1d41;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.transactions-scrollable {
+  max-height: 200px; /* Set a maximum height for the transactions */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding to prevent scrollbar from overlapping content */
+}
+
+.transactions-scrollable::-webkit-scrollbar {
+  width: 5px; /* Set the width of the scrollbar */
+}
+
+.transactions-scrollable::-webkit-scrollbar-thumb {
+  background: #6359E9; /* Customize the color of the scrollbar thumb */
+  border-radius: 10px;
+}
+
