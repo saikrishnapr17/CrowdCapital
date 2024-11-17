@@ -58,6 +58,9 @@ function App() {
         {activePage === 'investments' && <Investments />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
+        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} user_id={user_id} />}
+        {/* {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />} Add EnlistBusiness page */}
+        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
         {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
         {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />} {/* Add PayLoan page */}
