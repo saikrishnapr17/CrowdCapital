@@ -2,38 +2,13 @@
 import React, { useState } from 'react';
 import '../styles.css';
 
-function RequestLoan({ onNavigate, userId }) {
+function RequestLoan({ onNavigate }) {
   const [amount, setAmount] = useState('');
   const [reason, setReason] = useState('');
   const [emi, setEmi] = useState('');
-  const [message, setMessage] = useState('');
 
-  const handleSubmit = async () => {
-    setMessage('');
-    try {
-      const response = await fetch(`http://127.0.0.1:5000/community/${userId}/request_loan`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: Number(amount),
-          description: reason,
-          credit_score: emi, // Assuming EMI field as credit_score placeholder
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMessage(data.message);
-      } else {
-        const errorData = await response.json();
-        setMessage(errorData.error);
-      }
-    } catch (error) {
-      setMessage('An error occurred. Please try again.');
-      console.error('Error:', error);
-    }
+  const handleSubmit = () => {
+    console.log('Requesting loan for amount:', amount);
   };
 
   return (
@@ -58,7 +33,7 @@ function RequestLoan({ onNavigate, userId }) {
         />
         <input
           type="text"
-          placeholder="EMI:" // Placeholder for credit score input
+          placeholder="EMI:"
           value={emi}
           onChange={(e) => setEmi(e.target.value)}
           className="input-field"
@@ -67,11 +42,9 @@ function RequestLoan({ onNavigate, userId }) {
           <button className="action-button submit" onClick={handleSubmit}>Submit</button>
           <button className="action-button cancel" onClick={() => onNavigate('community')}>Cancel</button>
         </div>
-        {message && <p className="loan-message">{message}</p>}
       </div>
     </div>
   );
 }
 
 export default RequestLoan;
-
