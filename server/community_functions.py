@@ -121,11 +121,11 @@ def approve_or_deny_loan(user_id, loan_id, approve=True):
         raise ValueError("Loan request not found")
 
     if loan["user_id"] == user_id:
-        raise ValueError("Loan requester cannot approve their own loan")
+        return "Loan requester cannot approve their own loan"
 
     contributor = next((c for c in community["contributors"] if c["user_id"] == user_id), None)
     if not contributor:
-        raise ValueError("Only contributors can vote on loans")
+        return "Only contributors can vote on loans"
 
     total_contributions = sum(c["amount"] for c in community["contributors"])
     user_weight = (contributor["amount"] / total_contributions) * 100
@@ -142,7 +142,7 @@ def approve_or_deny_loan(user_id, loan_id, approve=True):
             if community["total_balance"] >= loan["amount"]:
                 community["total_balance"] -= loan["amount"]
             else:
-                raise ValueError("Community fund has insufficient balance for this loan")
+                return "Community fund has insufficient balance for this loan"
     else:
         loan["approval_percentage"] -= user_weight
 
@@ -156,7 +156,7 @@ def approve_or_deny_loan(user_id, loan_id, approve=True):
 
 def get_all_pending_loans():
     """
-    Retrieves all pending loan requests from the community fund.
+    Retrieves all pending loan requests from the community fund, displaying user names instead of user IDs.
     """
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
@@ -164,7 +164,17 @@ def get_all_pending_loans():
     if not community or "pending_loan_requests" not in community:
         raise ValueError("No pending loans found")
 
-    return community["pending_loan_requests"]
+    pending_loans = community["pending_loan_requests"]
+
+    # Replace user_id with user names
+    for loan in pending_loans:
+        user = get_user_by_id(loan["user_id"])
+        if user:
+            loan["user_name"] = user.get("name", "Unknown")  # Add the user's name
+        else:
+            loan["user_name"] = "Unknown"
+
+    return pending_loans
 
 
 def make_loan_payment(user_id, loan_id, payment_amount):
