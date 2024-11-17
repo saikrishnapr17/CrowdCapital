@@ -18,22 +18,24 @@ except ValueError:
 db = firestore.client()
 
 from fraudLLM import fraud_detection
-from user_functions import create_user, get_user_by_id, deposit_money
+from user_functions import create_user, get_user_by_id, deposit_money, get_wallet_balance
 from transaction_functions import create_transaction, transfer_money, get_transactions_by_user
 from community_functions import (
     contribute_to_community,
     request_loan,
     approve_or_deny_loan,
     make_loan_payment,
-    withdraw_from_community
+    withdraw_from_community,
+    get_community_interest
 )
 
+from investment_functions import enlist_business, invest_in_business, get_business_investments
 
 # Initialize Flask app
 CORS(app)
 
 # User Endpoints
-@app.route("/fraud", methods=["GET"])
+@app.route("/fraud", methods=["POST"])
 def fraudcheck():
     data = request.json
     message = data["message"]
@@ -49,7 +51,7 @@ def create_user_endpoint():
 @app.route("/users/<user_id>/deposit", methods=["POST"])
 def deposit_money_endpoint(user_id):
     data = request.json
-    amount = data["amount"]
+    amount = int(data["amount"])
 
     try:
         new_balance = deposit_money(user_id, amount)
@@ -57,6 +59,16 @@ def deposit_money_endpoint(user_id):
         return jsonify({"message": "Deposit successful", "new_balance": new_balance}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
+@app.route("/users/<user_id>/wallet_balance", methods=["GET"])
+def get_wallet_balance_endpoint(user_id):
+    """Endpoint to get the wallet balance of a user."""
+    try:
+        balance = get_wallet_balance(user_id)
+        return jsonify(balance), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
 
 # Transaction Endpoints
 @app.route("/transactions/transfer", methods=["POST"])
@@ -207,6 +219,57 @@ def withdraw_from_community_endpoint(user_id):
     try:
         community = withdraw_from_community(user_id, amount)
         return jsonify({"message": "Withdrawal successful", "community": community}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/community/interest", methods=["GET"])
+def get_community_interest_endpoint():
+    """Endpoint to get the total interest earned for the community."""
+    try:
+        result = get_community_interest()
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+# Investment Endpoints
+@app.route("/business/enlist", methods=["POST"])
+def enlist_business_endpoint():
+    """Endpoint for enlisting a business."""
+    data = request.json
+    owner_id = data["owner_id"]
+    business_name = data["business_name"]
+    description = data["description"]
+    goal = data["goal"]
+    equity = data["equity"]
+
+    try:
+        business = enlist_business(owner_id, business_name, description, goal, equity)
+        return jsonify({"message": "Business enlisted successfully", "business": business}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/business/<business_id>/invest", methods=["POST"])
+def invest_in_business_endpoint(business_id):
+    """Endpoint for investing in a business."""
+    data = request.json
+    user_id = data["user_id"]
+    amount_invested = data["amount_invested"]
+
+    try:
+        result = invest_in_business(user_id, business_id, amount_invested)
+        return jsonify({"message": "Investment successful", "result": result}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/business/<business_id>/investments", methods=["GET"])
+def get_business_investments_endpoint(business_id):
+    """Endpoint for viewing all investments for a business."""
+    try:
+        stakeholders = get_business_investments(business_id)
+        return jsonify({"stakeholders": stakeholders}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 

@@ -99,15 +99,42 @@ body {
 .dashboard-cards {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* This gap ensures consistent spacing between each card */
   margin-bottom: 20px;
 }
 
-.dashboard-card {
+.dashboard-card, .wallet-transactions-section{
   background-color: #1d1d41;
   padding: 20px;
   border-radius: 10px;
+  margin-bottom: 20px; /* Ensures consistent spacing with other elements */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Adds shadow for consistent appearance */
 }
+
+/* Specific Styles for Send Money Section */
+.send-money-section {
+  width: 100v;
+  max-width: 400px; /* Limit width for consistent appearance */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background-color: #1d1d41; /* Consistent background color */
+}
+
+/* Input Fields in Send Money Section */
+.send-money-form input[type="text"],
+.send-money-form input[type="number"] {
+  width: calc(100% - 40px); /* Ensure consistent padding within the tile */
+  padding: 15px;
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  margin-bottom: 15px; /* Space between inputs */
+  background-color: #A4A6B3;
+  color: #FFFFFF;
+  text-align: center;
+}
+
 
 .analytics-section, .transactions-section {
   background-color: #1d1d41;
@@ -410,4 +437,653 @@ body {
   margin-top: 20px;
   font-size: 16px;
   color: #0a1f44;
+}
+/* Send Money Section Styling - Update */
+.send-money-section {
+  background-color: #1d1d41; /* Updated to match the other cards */
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 100v;
+  max-width: 350px; /* Match the size of other cards */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Optional shadow for a consistent look */
+}
+.deposit-section {
+  background-color: #f0f4f8;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 100v;
+  max-width: 600px;
+}
+
+.send-money-form,
+.deposit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.send-money-form label,
+.deposit-form label {
+  font-size: 16px;
+  color: #0a1f44;
+}
+
+.confirm-button {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px;
+  background-color: #0a1f44;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #081a37;
+}
+
+.send-money-message,
+.deposit-message {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #0a1f44;
+}
+
+/* Community Page Styling */
+.community-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+/* Close Button */
+.close-button {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Community Page Styling */
+.community-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Navbar in community page */
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Close Button Styling */
+.close-button {
+  background: none;
+  border: none;
+  color: #FFFFFF;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Community Header */
+.community-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Community Card Styling */
+.community-card {
+  background-color: #1d1d41;
+  width: 100%;
+  max-width: 350px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Headings for Sections */
+.community-heading {
+  font-size: 24px;  /* Larger font size */
+  font-weight: bold;  /* Make the text bold */
+  margin: 20px 0 10px 0;  /* Add spacing */
+}
+
+/* Amount and Interest Section */
+.community-amount, .community-interest {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* Community Card Title and Value */
+.community-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+
+.community-value {
+  font-size: 18px;
+}
+
+/* Contributors List */
+.contributors-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.contributors-list li {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+/* Buttons for Actions */
+.community-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+}
+
+.community-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1 1 calc(48%); /* Make each button take half of the available width */
+  text-align: center;
+}
+
+.community-button:hover {
+  background-color: #081a37;
+}
+
+/* Contribute Page Styling */
+.contribute-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Align elements at the top */
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.contribute-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0 40px 0; /* Add margin to move other elements down */
+}
+
+.contribute-input {
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 15px;
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  margin-bottom: 30px;
+  text-align: center;
+  background-color: #A4A6B3;
+  color: #FFFFFF;
+}
+
+.contribute-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px; /* Add margin to add space between input and buttons */
+}
+
+.contribute-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contribute-button.cancel {
+  background-color: #00CFFF;
+}
+
+.contribute-button:hover {
+  background-color: #081a37;
+}
+
+.tile {
+  background-color: #1d1d41; /* Consistent color for all tiles */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px; /* Ensure consistent spacing between all tiles */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Request Loan Page Styling */
+.request-loan-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Align elements at the top */
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 40px 20px; /* Added more padding for an open feel */
+  box-sizing: border-box;
+}
+
+.request-loan-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 50px; /* Increase the space below the header */
+}
+
+.request-loan-form {
+  width: calc(100% - 40px);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Increased gap for more spacing between fields */
+}
+
+.request-loan-input,
+.request-loan-textarea {
+  width: 100%;
+  padding: 20px; /* Increased padding for better usability */
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  background-color: #1d1d41;
+  color: #FFFFFF;
+}
+
+.request-loan-textarea {
+  min-height: 150px; /* Make the text area larger for a comfortable view */
+  resize: none;
+}
+
+.contribute-actions {
+  display: flex;
+  gap: 30px; /* Increased gap between the buttons */
+  justify-content: center;
+  width: 100%;
+  margin-top: 40px; /* Add more margin to create space between input and buttons */
+}
+
+.contribute-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contribute-button.cancel {
+  background-color: #00CFFF;
+}
+
+.contribute-button:hover {
+  background-color: #081a37;
+}
+
+.loan-approval-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.loan-approval-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.loan-approval-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.loan-approval-card p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.loan-approval-card p strong {
+  font-weight: bold;
+}
+
+.loan-approval-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+.loan-approval-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.loan-approval-button.deny {
+  background-color: #00CFFF;
+}
+
+.loan-approval-button:hover {
+  background-color: #081a37;
+}
+
+.pay-loan-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.pay-loan-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pay-loan-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pay-amount-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.pay-amount-card input {
+  width: calc(100% - 20px);
+  padding: 15px;
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: #2d2c55;
+  color: #FFFFFF;
+}
+
+.pay-loan-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+.pay-loan-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pay-loan-button.deny {
+  background-color: #00CFFF;
+}
+
+.pay-loan-button:hover {
+  background-color: #081a37;
+}
+
+.page-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.input-field {
+  width: calc(100% - 20px);
+  padding: 15px;
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: #2d2c55;
+  color: #FFFFFF;
+}
+
+.input-textarea {
+  width: calc(100% - 20px);
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: #2d2c55;
+  color: #FFFFFF;
+  height: 100px;
+  resize: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.action-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button.cancel {
+  background-color: #00CFFF;
+}
+
+.action-button:hover {
+  background-color: #081a37;
+}
+
+.page-header {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.input-field {
+  width: calc(100% - 20px);
+  padding: 15px;
+  border-radius: 35px;
+  border: none;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: #2d2c55;
+  color: #FFFFFF;
+}
+
+.input-textarea {
+  width: calc(100% - 20px);
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  font-size: 18px;
+  margin-top: 10px;
+  background-color: #2d2c55;
+  color: #FFFFFF;
+  height: 100px;
+  resize: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.action-button {
+  background-color: #6359E9;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button.cancel {
+  background-color: #00CFFF;
+}
+
+.action-button:hover {
+  background-color: #081a37;
+}
+
+/* Withdraw Contribution Page Styling */
+.withdraw-contribution-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center the content vertically */
+  min-height: 100vh; /* Take full viewport height */
+  width: 100vw;
+  background-color: #141332;
+  color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative; /* Needed for positioning adjustments */
+  transform: translateY(-15%); /* Moves the entire content slightly upwards */
+}
+
+.form-card {
+  background-color: #1d1d41;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }

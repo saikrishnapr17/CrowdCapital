@@ -12,15 +12,16 @@ function SMSFraudCheck({ onNavigate }) {
     setIsChecking(true);
     setResult(null);
     try {
-      const response = await fetch('http://localhost:5000/check_sms', {
+      const response = await fetch('http://127.0.0.1:5000/fraud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sms_content: smsContent }),
+        body: JSON.stringify({ message: smsContent }),
       });
       const data = await response.json();
       setResult(data);
+      console.log(data)
     } catch (error) {
       console.error('Error:', error);
     } finally {

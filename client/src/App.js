@@ -1,3 +1,4 @@
+// App.js
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -7,11 +8,18 @@ import TransactionsTable from './components/TransactionsTable';
 import MyWallet from './components/MyWallet';
 import SMSFraudCheck from './components/SMSFraudCheck';
 import Investments from './components/Investments';
-import './styles.css';
+import Community from './components/Community';
+import Contribute from './components/Contribute';
+import RequestLoan from './components/RequestLoan';
+import LoanApproval from './components/LoanApproval';
+import PayLoan from './components/PayLoan'; // Import the PayLoan component
+import WithdrawContribution from './components/WithdrawContribution';
 
+import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activePage, setActivePage] = useState('dashboard');
+  const [activePage, setActivePage] = useState('my-wallet');
+  const [user_id,setUserId]= useState('20699f80-620f-4f45-ac36-5328fd4c6b9e')
 
   const toggleSidebar = () => {
     setSidebarOpen(prevState => !prevState);
@@ -43,9 +51,16 @@ function App() {
             </div>
           </>
         )}
-        {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} />}
+        {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
         {activePage === 'investments' && <Investments />}
+        {activePage === 'community' && <Community onNavigate={handlePageChange} />}
+        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} />}
+        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
+        {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
+        {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />} {/* Add PayLoan page */}
+        {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} />}
+
       </div>
     </div>
   );
