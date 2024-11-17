@@ -97,7 +97,6 @@ def invest_in_business(user_id, business_id, amount_invested):
         user_id,
         "investment",
         amount_invested,
-        description=f"Invested in business {business['business_name']}",
         target_user=owner_id
     )
 
