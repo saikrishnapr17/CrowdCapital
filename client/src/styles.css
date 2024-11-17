@@ -121,4 +121,71 @@ body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 500;
+}.my-wallet-container {
+  padding: 20px;
+}
+
+.wallet-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.balance-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.balance-card {
+  flex: 1;
+  padding: 20px;
+  background-color: #EDE8F5;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wallet-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+.wallet-action-button {
+  background-color: #0a1f44;
+  color: #FFFFFF;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.wallet-action-button:hover {
+  background-color: #081a37;
+}
+
+.wallet-transactions-section {
+  background-color: #EDE8F5;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.back-to-dashboard-button {
+  background-color: #0a1f44;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.back-to-dashboard-button:hover {
+  background-color: #081a37;
 }

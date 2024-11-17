@@ -1,18 +1,18 @@
 // components/Sidebar.js
 import React from 'react';
 
-function Sidebar({ isOpen }) {
+function Sidebar({ isOpen, onNavigate }) {
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <h2>uifry</h2>
       <ul>
-        <li>Dashboard</li>
-        <li>Analytics</li>
-        <li>My Wallet</li>
-        <li>Accounts</li>
-        <li>Settings</li>
-        <li>Security</li>
-        <li>Help Centre</li>
+        <li onClick={() => onNavigate('dashboard')}>Dashboard</li>
+        <li onClick={() => onNavigate('analytics')}>Analytics</li>
+        <li onClick={() => onNavigate('my-wallet')}>My Wallet</li>
+        <li onClick={() => onNavigate('accounts')}>Accounts</li>
+        <li onClick={() => onNavigate('settings')}>Settings</li>
+        <li onClick={() => onNavigate('security')}>Security</li>
+        <li onClick={() => onNavigate('help')}>Help Centre</li>
         <li>Dark Mode</li>
       </ul>
       <div className="user-info">
