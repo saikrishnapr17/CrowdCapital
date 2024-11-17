@@ -1,14 +1,17 @@
+// components/PayLoan.js
 import React, { useState } from 'react';
 import '../styles.css';
 
-function PayLoan({ onNavigate, userId, loanId }) {
+function PayLoan({ onNavigate, userId }) {
   const [payAmount, setPayAmount] = useState('');
   const [message, setMessage] = useState('');
+  const [remainingBalance, setRemainingBalance] = useState(null);
+  const [updatedLoans, setUpdatedLoans] = useState([]);
 
   const handlePay = async () => {
     setMessage('');
     try {
-      const response = await fetch(`http://127.0.0.1:5000/community/${userId}/loan/${loanId}/make_payment`, {
+      const response = await fetch(`http://127.0.0.1:5000/community/${userId}/make_payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,6 +24,8 @@ function PayLoan({ onNavigate, userId, loanId }) {
       if (response.ok) {
         const data = await response.json();
         setMessage(data.message);
+        setRemainingBalance(data.remaining_balance);
+        setUpdatedLoans(data.updated_loans);
       } else {
         const errorData = await response.json();
         setMessage(errorData.error);
@@ -43,7 +48,7 @@ function PayLoan({ onNavigate, userId, loanId }) {
       </div>
       <h2 className="page-header">Pay Loan</h2>
       <div className="form-card">
-        <p><strong>Remaining Amount:</strong> $2000</p> {/* Replace with dynamic remaining amount */}
+        <p><strong>Remaining Amount:</strong> ${remainingBalance !== null ? remainingBalance : 'Loading...'}</p>
         <input
           type="number"
           placeholder="Enter Amount ($)"
@@ -56,6 +61,18 @@ function PayLoan({ onNavigate, userId, loanId }) {
           <button className="action-button cancel" onClick={handleDeny}>Deny</button>
         </div>
         {message && <p className="loan-message">{message}</p>}
+        {remainingBalance !== null && (
+          <div className="updated-loans">
+            <h3>Updated Loan Details:</h3>
+            {updatedLoans.map((loan) => (
+              <div key={loan.loan_id} className="loan-details">
+                <p><strong>Amount:</strong> ${loan.amount}</p>
+                <p><strong>EMI:</strong> ${loan.emi}</p>
+                <p><strong>Status:</strong> {loan.status}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
