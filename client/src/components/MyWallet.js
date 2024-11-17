@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TransactionsTable from './TransactionsTable';
 import '../styles.css';
-import { FaArrowUp, FaArrowDown, FaCamera} from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaCamera } from 'react-icons/fa';
 
 function MyWallet({ onNavigate, user_id }) {
   const [isSendMoneyVisible, setIsSendMoneyVisible] = useState(false);
@@ -51,9 +51,24 @@ function MyWallet({ onNavigate, user_id }) {
     }
   };
 
+  const fetchCreditScore = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/credit/${user_id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCreditScore(data.credit_score);
+      } else {
+        console.error('Failed to fetch credit score');
+      }
+    } catch (error) {
+      console.error('Error fetching credit score:', error);
+    }
+  };
+
   useEffect(() => {
     fetchTransactions();
     fetchWalletBalance();
+    fetchCreditScore();
   }, [user_id]);
 
   const handleSendClick = () => {
@@ -116,13 +131,10 @@ function MyWallet({ onNavigate, user_id }) {
 
     try {
       const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/deposit`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          amount: depositAmount,
-        }),
       });
 
       if (response.ok) {
@@ -249,7 +261,6 @@ function MyWallet({ onNavigate, user_id }) {
         </div>
       )}
 
-                onChange={(e) => setDepositAmount(e.target.value)}
       {/* Credit Score Section */}
       <div className="credit-score-section">
         <div className="credit-score-card">
@@ -257,7 +268,7 @@ function MyWallet({ onNavigate, user_id }) {
           <div className="credit-score-display">
             <div className="credit-score-value">
               <p>{creditScore}</p>
-              <span>Fair</span>
+              <span>{creditScore >= 720 ? 'Good' : creditScore >= 660 ? 'Fair' : 'Poor'}</span>
             </div>
             <div className="credit-score-meter">
               <div

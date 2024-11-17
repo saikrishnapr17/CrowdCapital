@@ -16,7 +16,7 @@ function Community({ onNavigate }) {
           const data = await response.json();
           setFundAmount(data.community_fund.total_balance);
           setInterestEarned(data.community_fund.total_interest_earned);
-          setContributors(data.community_fund.contributors.map(contributor => `User ID: ${contributor.user_id}, Amount: $${contributor.amount}`));
+          setContributors(data.community_fund.contributors.map(contributor => ` ${contributor.name}: $${contributor.amount}`));
         } else {
           console.error('Failed to fetch community fund data');
         }
