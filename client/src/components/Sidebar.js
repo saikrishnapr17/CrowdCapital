@@ -1,9 +1,9 @@
 // components/Sidebar.js
 import React from 'react';
 
-function Sidebar() {
+function Sidebar({ isOpen }) {
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <h2>uifry</h2>
       <ul>
         <li>Dashboard</li>

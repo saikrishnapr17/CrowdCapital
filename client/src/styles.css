@@ -1,75 +1,124 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #ADBBDA;
-    color: #0a1f44;
-    margin: 0;
-    padding: 0;
-    width: 430px;
-    height: 932px;
-  }
-  
-  .app-container {
-    display: flex;
-  }
-  
-  .sidebar {
-    width: 300px;
-    background-color: #EDE8F5;
-    padding: 20px;
-  }
-  
-  .main-content {
-    flex-grow: 1;
-    padding: 20px;
-  }
-  
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-cards {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-card {
-    background-color: #EDE8F5;
-    padding: 20px;
-    border-radius: 10px;
-    flex: 1;
-  }
-  
-  .analytics-section, .transactions-section {
-    background-color: #EDE8F5;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .analytics-chart {
-    height: 300px;
-  }
-  
-  .transactions-table table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .transactions-table th, .transactions-table td {
-    border: 1px solid #EDE8F5;
-    padding: 10px;
-    text-align: left;
-  } 
-  
-  .transactions-table th {
-    background-color: #EDE8F5;
-  }
-  
-  .transactions-table td {
-    background-color: #EDE8F5;
-  }
-  
+  font-family: 'Arial', sans-serif;
+  background-color: #ADBBDA;
+  color: #0a1f44;
+  margin: 0;
+  padding: 0;
+  width: 430px;
+  height: 932px;
+}
+
+.app-container {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.sidebar {
+  width: 300px; /* Sidebar width */
+  background-color: #EDE8F5;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: -340px; /* Move it further left to hide completely (300px width + 20px padding on both sides) */
+  height: 100%;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+}
+
+.sidebar.open {
+  left: 0; /* Align with the left edge when open */
+}
+
+.sidebar.visible {
+  transform: translateX(0); /* Slide in when visible */
+}
+.sidebar.hidden{
+  transform: translateX(-100%);
+}
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+.sidebar.hidden .close-button {
+  display: none;
+}
+.main-content {
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+}
+.main-content.shifted {
+  margin-left: 300px; 
+}
+
+.hamburger-menu {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1500;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-card {
+  background-color: #EDE8F5;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.analytics-section, .transactions-section {
+  background-color: #EDE8F5;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.analytics-chart {
+  height: 300px;
+}
+
+.transactions-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transactions-table th, .transactions-table td {
+  border: 1px solid #EDE8F5;
+  padding: 10px;
+  text-align: left;
+}
+
+.transactions-table th {
+  background-color: #EDE8F5;
+}
+
+.transactions-table td {
+  background-color: #EDE8F5;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+}
