@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TransactionsTable from './TransactionsTable';
 import '../styles.css';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaCamera} from 'react-icons/fa';
 
 function MyWallet({ onNavigate, user_id }) {
   const [isSendMoneyVisible, setIsSendMoneyVisible] = useState(false);
@@ -209,6 +209,42 @@ function MyWallet({ onNavigate, user_id }) {
               </button>
             </div>
             {message && <p className="send-money-message">{message}</p>}
+          </div>
+        </div>
+      )}
+
+      {/* Deposit Section */}
+        {isDepositVisible && (
+        <div className="send-money-section">
+          <h3>Deposit Money</h3>
+          <div className="send-money-form">
+            <button className="wallet-action-button">
+              <FaCamera /> Scan Check
+            </button>
+            <label>
+              <input
+                type="number"
+                placeholder="Enter the Amount ($)"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+              />
+            </label>
+            <div className="contribute-actions">
+              <button
+                className="contribute-button submit"
+                onClick={handleConfirmDepositClick}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Depositing...' : 'Submit'}
+              </button>
+              <button
+                className="contribute-button cancel"
+                onClick={() => setIsDepositVisible(false)}
+              >
+                Cancel
+              </button>
+            </div>
+            {depositMessage && <p className="send-money-message">{depositMessage}</p>}
           </div>
         </div>
       )}
