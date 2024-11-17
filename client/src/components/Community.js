@@ -28,10 +28,10 @@ function Community({ onNavigate }) {
       </div>
       <div className="community-actions">
         <button className="community-button" onClick={() => onNavigate('contribute')}>Contribute</button>
-        <button className="community-button">Request Loan</button>
-        <button className="community-button">Loan Approvals</button>
-        <button className="community-button">Pay Loan</button>
-        <button className="community-button">Withdraw Contribution</button>
+        <button className="community-button" onClick={() => onNavigate('request-loan')}>Request Loan</button>
+        <button className="community-button" onClick={() => onNavigate('loan-approval')}>Loan Approvals</button>
+        <button className="community-button" onClick={() => onNavigate('pay-loan')}>Pay Loan</button>
+        <button className="community-button" onClick={() => onNavigate('withdraw-contribution')}>Withdraw Contribution</button>
       </div>
     </div>
   );

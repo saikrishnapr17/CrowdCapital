@@ -9,7 +9,12 @@ import MyWallet from './components/MyWallet';
 import SMSFraudCheck from './components/SMSFraudCheck';
 import Investments from './components/Investments';
 import Community from './components/Community';
-import Contribute from './components/Contribute'; // Import Contribute component
+import Contribute from './components/Contribute';
+import RequestLoan from './components/RequestLoan';
+import LoanApproval from './components/LoanApproval';
+import PayLoan from './components/PayLoan'; // Import the PayLoan component
+import WithdrawContribution from './components/WithdrawContribution';
+
 import './styles.css';
 
 function App() {
@@ -51,6 +56,11 @@ function App() {
         {activePage === 'investments' && <Investments />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} />}
+        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
+        {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
+        {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />} {/* Add PayLoan page */}
+        {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} />}
+
       </div>
     </div>
   );

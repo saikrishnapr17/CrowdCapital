@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TransactionsTable from './TransactionsTable';
 import '../styles.css';
-import { FaArrowUp, FaArrowDown, FaTimes } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaTimes, FaCamera } from 'react-icons/fa';
 
 function MyWallet({ onNavigate }) {
   const [isSendMoneyVisible, setIsSendMoneyVisible] = useState(false);
@@ -53,23 +53,26 @@ function MyWallet({ onNavigate }) {
     }
   };
 
+  // Adding the handleConfirmDepositClick function
   const handleConfirmDepositClick = async () => {
     setIsSubmitting(true);
     setDepositMessage('');
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${phoneNumber}/deposit`, {
+      const response = await fetch(`http://127.0.0.1:5000/users/user_id/deposit`, { // Replace 'user_id' with actual user ID
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount: depositAmount }),
+        body: JSON.stringify({
+          amount: depositAmount,
+        }),
       });
 
       if (response.ok) {
         setDepositMessage('Deposit successful!');
       } else {
-        setDepositMessage('Failed to deposit. Please try again.');
+        setDepositMessage('Failed to deposit money. Please try again.');
       }
     } catch (error) {
       setDepositMessage('An error occurred. Please try again.');
@@ -106,57 +109,72 @@ function MyWallet({ onNavigate }) {
           <h3>Send Money</h3>
           <div className="send-money-form">
             <label>
-              Recipient Phone Number:
               <input
                 type="text"
+                placeholder="Enter the Phone Number of Recipient"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </label>
             <label>
-              Amount:
               <input
                 type="number"
+                placeholder="Enter the Amount ($)"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
             </label>
-            <button
-              className="confirm-button"
-              onClick={handleConfirmSendClick}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Sending...' : 'Confirm'}
-            </button>
+            <div className="contribute-actions">
+              <button
+                className="contribute-button submit"
+                onClick={handleConfirmSendClick}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Submit'}
+              </button>
+              <button
+                className="contribute-button cancel"
+                onClick={() => setIsSendMoneyVisible(false)}
+              >
+                Cancel
+              </button>
+            </div>
             {message && <p className="send-money-message">{message}</p>}
           </div>
         </div>
       )}
 
       {isDepositVisible && (
-        <div className="deposit-section">
+        <div className="send-money-section">
           <h3>Deposit Money</h3>
-          <div className="deposit-form">
+          <div className="send-money-form">
+            <button className="wallet-action-button">
+              <FaCamera /> Scan Check
+            </button>
             <label>
-              Upload Image:
-              <input type="file" />
-            </label>
-            <label>
-              Amount:
               <input
                 type="number"
+                placeholder="Enter the Amount ($)"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
               />
             </label>
-            <button
-              className="confirm-button"
-              onClick={handleConfirmDepositClick}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Depositing...' : 'Submit'}
-            </button>
-            {depositMessage && <p className="deposit-message">{depositMessage}</p>}
+            <div className="contribute-actions">
+              <button
+                className="contribute-button submit"
+                onClick={handleConfirmDepositClick}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Depositing...' : 'Submit'}
+              </button>
+              <button
+                className="contribute-button cancel"
+                onClick={() => setIsDepositVisible(false)}
+              >
+                Cancel
+              </button>
+            </div>
+            {depositMessage && <p className="send-money-message">{depositMessage}</p>}
           </div>
         </div>
       )}
