@@ -1,12 +1,31 @@
-// components/Contribute.js
 import React, { useState } from 'react';
 import '../styles.css';
 
-function Contribute({ onNavigate }) {
+function Contribute({ onNavigate, user_id }) {
   const [amount, setAmount] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleContribute = () => {
-    console.log('Contributing amount:', amount);
+  const handleContribute = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/community/${user_id}/contribute`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: Number(amount) }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessage(data.message);
+      } else {
+        const errorData = await response.json();
+        setMessage(errorData.error);
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -27,9 +46,11 @@ function Contribute({ onNavigate }) {
           <button className="action-button submit" onClick={handleContribute}>Submit</button>
           <button className="action-button cancel" onClick={() => onNavigate('community')}>Cancel</button>
         </div>
+        {message && <p className="contribute-message">{message}</p>}
       </div>
     </div>
   );
 }
 
 export default Contribute;
+
