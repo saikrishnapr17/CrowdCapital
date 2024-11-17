@@ -36,7 +36,7 @@ CORS(app)
 @app.route("/fraud", methods=["GET"])
 def fraudcheck():
     data = request.json
-    message = data.get("message")
+    message = data["message"]
     result = fraud_detection(message)
     return jsonify(result)
 
