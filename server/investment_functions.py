@@ -98,3 +98,12 @@ def get_business_investments(business_id):
         raise ValueError("Business not found")
 
     return business["stakeholders"]
+
+def get_all_business_ids():
+    """
+    Retrieves all business IDs from the businesses collection.
+    """
+    businesses_ref = db.collection("businesses")
+    business_docs = businesses_ref.stream()
+    business_ids = [doc.id for doc in business_docs]
+    return {"business_ids": business_ids}
