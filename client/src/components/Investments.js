@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles.css';
 import { Chart } from 'chart.js/auto';
 import { FaPlus } from 'react-icons/fa';
@@ -6,6 +6,8 @@ import { FaPlus } from 'react-icons/fa';
 function Investments({ onNavigate }) {
   const [businesses, setBusinesses] = useState([]);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [investingBusiness, setInvestingBusiness] = useState(null);
+  const chartInstanceRef = useRef(null);
 
   useEffect(() => {
     // Fetch business list from API
@@ -26,19 +28,24 @@ function Investments({ onNavigate }) {
     fetchBusinesses();
   }, []);
 
-  const handleBusinessClick = (business) => {
-    setSelectedBusiness(business);
-
-    // Render the pie chart with business-specific data
-    setTimeout(() => {
+  // Effect to render chart after selecting a business
+  useEffect(() => {
+    if (selectedBusiness) {
       const ctx = document.getElementById('equityChart');
+
+      // Destroy existing chart instance if it exists
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+
       if (ctx) {
-        new Chart(ctx, {
+        // Create a new chart and store its instance
+        chartInstanceRef.current = new Chart(ctx, {
           type: 'pie',
           data: {
             labels: ['Equity Offered', 'Remaining Goal'],
             datasets: [{
-              data: [business.equity, business.goal - business.equity],
+              data: [selectedBusiness.equity, selectedBusiness.goal - selectedBusiness.equity],
               backgroundColor: ['#6359E9', '#1d1d41'],
               borderWidth: 0,
             }]
@@ -54,17 +61,29 @@ function Investments({ onNavigate }) {
           }
         });
       }
-    }, 100);
+    }
+  }, [selectedBusiness]);
+
+  const handleBusinessClick = (business) => {
+    setSelectedBusiness(business);
   };
 
   const handleBackClick = () => {
     setSelectedBusiness(null);
   };
 
+  const handleInvestClick = (business) => {
+    setInvestingBusiness(business);
+  };
+
+  const handleCancelInvest = () => {
+    setInvestingBusiness(null);
+  };
+
   return (
     <div>
       {/* Business List Section */}
-      {selectedBusiness === null && (
+      {selectedBusiness === null && investingBusiness === null && (
         <div className="investments-page">
           <div className="investments-header">
             <h2>Community Businesses</h2>
@@ -87,7 +106,7 @@ function Investments({ onNavigate }) {
       )}
 
       {/* Business Details Section */}
-      {selectedBusiness !== null && (
+      {selectedBusiness !== null && investingBusiness === null && (
         <div className="business-details-page">
           <div className="navbar">
             <button className="close-button" onClick={handleBackClick}>X</button>
@@ -108,7 +127,34 @@ function Investments({ onNavigate }) {
               <canvas id="equityChart"></canvas>
             </div>
 
-            <button className="invest-button">Invest</button>
+            <button className="invest-button" onClick={() => handleInvestClick(selectedBusiness)}>
+              Invest
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Investment Form Section */}
+      {investingBusiness !== null && (
+        <div className="investment-form-page">
+          <div className="investment-form-card">
+            <h3>{investingBusiness.business_name}</h3>
+            <label>
+              <input
+                type="number"
+                placeholder="Amount to be Invested ($)"
+              />
+            </label>
+            <label>
+              <input
+                type="number"
+                placeholder="Percentage of Equity"
+              />
+            </label>
+            <div className="investment-actions">
+              <button className="light-rounded-button">Purchase</button>
+              <button className="light-rounded-button cancel" onClick={handleCancelInvest}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
