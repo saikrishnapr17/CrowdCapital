@@ -1,5 +1,6 @@
 import uuid
 from firebase_admin import firestore
+from transaction_functions import create_transaction
 from user_functions import get_user_by_id, update_user
 
 db = firestore.client()
@@ -27,8 +28,9 @@ def enlist_business(owner_id, business_name, description, goal, equity):
 
 def invest_in_business(user_id, business_id, amount_invested):
     """
-    Allows a user to invest in a business and updates their equity.
+    Allows a user to invest in a business, updates their equity, and records the transaction.
     """
+    # Fetch business details
     business_ref = db.collection("businesses").document(business_id)
     business = business_ref.get().to_dict()
 
@@ -71,6 +73,7 @@ def invest_in_business(user_id, business_id, amount_invested):
     user = get_user_by_id(user_id)
     if not user:
         raise ValueError("User not found")
+
     user_new_balance = user["wallet_balance"] - amount_invested
     if user_new_balance < 0:
         raise ValueError("Insufficient user balance")
@@ -84,7 +87,23 @@ def invest_in_business(user_id, business_id, amount_invested):
         "equity_from_investments": new_equity
     })
 
-    return {"business": business, "investment": investment_data}
+    # Record the transaction for the user
+    create_transaction(user_id, "investment", amount_invested, description=f"Invested in business {business['business_name']}")
+
+    # Return the updated business and investment details
+    return {
+        "message": "Investment successful",
+        "business": {
+            "business_name": business["business_name"],
+            "remaining_amount": business["remaining_amount"],
+            "total_equity": business["equity"]
+        },
+        "user_investment": {
+            "investment_id": investment_id,
+            "amount_invested": amount_invested,
+            "equity_share": equity_share
+        }
+    }
 
 
 def get_business_investments(business_id):
