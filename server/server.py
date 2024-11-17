@@ -273,16 +273,19 @@ def approve_or_deny_loan_endpoint(user_id):
         return jsonify({"error": str(e)}), 400
 
 
-@app.route("/community/<user_id>/make_payment", methods=["POST"])
-def make_loan_payment_endpoint(user_id):
-    """Endpoint for making a loan payment."""
+@app.route("/community/<user_id>/loan/<loan_id>/make_payment", methods=["POST"])
+def make_payment_endpoint(user_id, loan_id):
+    """Endpoint for making a payment towards a specific loan."""
     data = request.json
-    loan_id = data["loan_id"]
     payment_amount = data["payment_amount"]
 
     try:
-        loan = make_loan_payment(user_id, loan_id, payment_amount)
-        return jsonify({"message": "Payment successful", "loan": loan}), 200
+        response = make_loan_payment(user_id, loan_id, payment_amount)
+        return jsonify({
+            "message": response["message"],
+            "updated_loan": response["updated_loan"],
+            "remaining_loans": response["remaining_loans"]
+        }), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 

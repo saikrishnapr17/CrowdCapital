@@ -179,8 +179,8 @@ def get_all_pending_loans():
     return pending_loans
 
 
-def make_loan_payment(user_id, payment_amount):
-    """Allows a borrower to make a payment against their aggregated loan balance."""
+def make_loan_payment(user_id, loan_id, payment_amount):
+    """Allows a borrower to make a payment against their specific loan or aggregated loan balance."""
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
 
@@ -192,32 +192,29 @@ def make_loan_payment(user_id, payment_amount):
     if not user_loans:
         raise ValueError("No active loans found for the user")
 
-    # Calculate the aggregated loan balance
-    total_loan_balance = sum(loan["amount"] - loan.get("paid_amount", 0) for loan in user_loans)
-    if payment_amount > total_loan_balance:
-        raise ValueError("Payment amount exceeds total loan balance")
+    # Identify the specific loan by loan_id
+    target_loan = next((loan for loan in user_loans if loan["loan_id"] == loan_id), None)
+    if not target_loan:
+        raise ValueError("Loan with the provided ID not found for the user")
 
-    # Distribute payment across user's active loans
-    for loan in user_loans:
-        remaining_balance = loan["amount"] - loan.get("paid_amount", 0)
-        if payment_amount <= 0:
-            break
+    # Calculate the remaining balance for the specific loan
+    remaining_balance = target_loan["amount"] - target_loan.get("paid_amount", 0)
+    if payment_amount > remaining_balance:
+        raise ValueError("Payment amount exceeds remaining balance for the loan")
 
-        # Apply payment to this loan
-        payment_to_apply = min(payment_amount, remaining_balance)
-        loan["paid_amount"] = loan.get("paid_amount", 0) + payment_to_apply
-        payment_amount -= payment_to_apply
+    # Apply payment to the specific loan
+    target_loan["paid_amount"] = target_loan.get("paid_amount", 0) + payment_amount
 
-        # Mark loan as repaid if fully paid
-        if loan["paid_amount"] >= loan["amount"]:
-            loan["status"] = "repaid"
-            community["active_loans"].remove(loan)
+    # Mark the loan as repaid if fully paid
+    if target_loan["paid_amount"] >= target_loan["amount"]:
+        target_loan["status"] = "repaid"
+        community["active_loans"].remove(target_loan)
 
-        # Update loan document in Firestore
-        db.collection("loans").document(loan["loan_id"]).update({
-            "paid_amount": loan["paid_amount"],
-            "status": loan["status"]
-        })
+    # Update loan document in Firestore
+    db.collection("loans").document(target_loan["loan_id"]).update({
+        "paid_amount": target_loan["paid_amount"],
+        "status": target_loan["status"]
+    })
 
     # Update community fund balance
     community["total_balance"] += payment_amount
@@ -228,7 +225,12 @@ def make_loan_payment(user_id, payment_amount):
     # Record transaction
     create_transaction(user_id, "loan_payment", payment_amount)
 
-    return {"message": "Payment applied successfully", "remaining_loans": user_loans}
+    return {
+        "message": "Payment applied successfully",
+        "updated_loan": target_loan,
+        "remaining_loans": user_loans
+    }
+
 
 
 def withdraw_from_community(user_id, amount):
