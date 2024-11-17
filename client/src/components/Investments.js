@@ -12,10 +12,10 @@ function Investments({ onNavigate }) {
     // Fetch business list from API
     const fetchBusinesses = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/businesses/info');
+        const response = await fetch('http://127.0.0.1:5000/business/list');
         if (response.ok) {
           const data = await response.json();
-          setBusinesses(data.businesses);
+          setBusinesses(data);
         } else {
           console.error('Failed to fetch business list');
         }
@@ -29,33 +29,6 @@ function Investments({ onNavigate }) {
 
   const handleBusinessClick = (business) => {
     setSelectedBusiness(business);
-
-    // Render the pie chart with business-specific data
-    setTimeout(() => {
-      const ctx = document.getElementById('equityChart');
-      if (ctx) {
-        new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: ['Equity Offered', 'Remaining Goal'],
-            datasets: [{
-              data: [business.equity, business.goal - business.equity],
-              backgroundColor: ['#f6f203', '#808080'],
-              borderWidth: 0,
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-                position: 'bottom',
-              }
-            }
-          }
-        });
-      }
-    }, 100);
   };
 
   const handleBackClick = () => {
@@ -84,7 +57,7 @@ function Investments({ onNavigate }) {
                 className="business-button"
                 onClick={() => handleBusinessClick(business)}
               >
-                {business.business_name}
+                {business.name}
               </button>
             ))}
           </div>
@@ -99,10 +72,10 @@ function Investments({ onNavigate }) {
           </div>
           <div className="details-content">
             <h2>Business Name</h2>
-            <p className="subheading">{selectedBusiness.business_name}</p>
+            <p className="subheading">{selectedBusiness.name}</p>
 
             <h2>Owner Name</h2>
-            <p className="subheading">{selectedBusiness.owner_name || 'Placeholder for Owner\'s Name'}</p>
+            <p className="subheading">{selectedBusiness.owner || 'Placeholder for Owner\'s Name'}</p>
 
             <h2>Description</h2>
             <p className="subheading">{selectedBusiness.description || 'Placeholder for Business Description'}</p>

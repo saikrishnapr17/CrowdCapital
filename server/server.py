@@ -26,11 +26,10 @@ from community_functions import (
     approve_or_deny_loan,
     make_loan_payment,
     withdraw_from_community,
-    get_community_interest,
-    calculate_emi
+    get_community_interest
 )
 
-from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_info
+from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_ids
 
 # Initialize Flask app
 CORS(app)
@@ -104,7 +103,7 @@ def get_users():
     
     return jsonify(doc.to_dict())
 
-#@app.route('/credit/<user_id>', methods=["GET"])
+@app.route('/credit/<user_id>')
 def get_user_credit(user_id):
     transactions = get_transactions_by_user(user_id)
     user = get_users()
@@ -149,7 +148,9 @@ def get_user_credit(user_id):
         debt_to_income_score * weights['debt_to_income']
     )
 
-    return final_credit_score
+    return jsonify({
+        'credit_score': final_credit_score
+    })
 
 
 #community endpoints
@@ -172,22 +173,11 @@ def request_loan_endpoint(user_id):
     data = request.json
     amount = data["amount"]
     description = data["description"]
+    credit_score = data["credit_score"]
 
     try:
-        # Calculate the user's credit score dynamically
-        credit_score = get_user_credit(user_id)
-
-        # Calculate the EMI based on the credit score and loan amount
-        emi = calculate_emi(amount, credit_score)
-
-        # Create the loan request using the calculated credit score
         loan_request = request_loan(user_id, amount, description, credit_score)
-        return jsonify({
-            "message": "Loan request created",
-            "loan_request": loan_request,
-            "calculated_credit_score": credit_score,
-            "emi": emi
-        }), 201
+        return jsonify({"message": "Loan request created", "loan_request": loan_request}), 201
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
@@ -243,15 +233,14 @@ def get_community_interest_endpoint():
 
 
 # Investment Endpoints
-@app.route("/businesses/info", methods=["GET"])
-def get_all_business_info_endpoint():
-    """Endpoint to retrieve all business information."""
+@app.route("/businesses", methods=["GET"])
+def get_all_business_ids_endpoint():
+    """Endpoint to retrieve all business IDs."""
     try:
-        business_info = get_all_business_info()
-        return jsonify(business_info), 200
+        business_ids = get_all_business_ids()
+        return jsonify(business_ids), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.route("/business/enlist", methods=["POST"])
