@@ -1,7 +1,7 @@
 // components/SMSFraudCheck.js
 import React, { useState } from 'react';
 import '../styles.css';
-import { FaTimes } from 'react-icons/fa';
+
 
 function SMSFraudCheck({ onNavigate }) {
   const [smsContent, setSmsContent] = useState('');
@@ -31,9 +31,6 @@ function SMSFraudCheck({ onNavigate }) {
   return (
     <div className="sms-fraud-check-container consistent-container">
       <div className="sms-fraud-header">
-        <button onClick={() => onNavigate('dashboard')} className="close-button">
-          <FaTimes />
-        </button>
         <h1>SMS Fraud Check</h1>
       </div>
       <div className="sms-fraud-input-section">
