@@ -19,6 +19,13 @@ db = firestore.client()
 
 from user_functions import create_user, get_user_by_id, deposit_money
 from transaction_functions import create_transaction, transfer_money, get_transactions_by_user
+from community_functions import (
+    contribute_to_community,
+    request_loan,
+    approve_or_deny_loan,
+    make_loan_payment,
+    withdraw_from_community
+)
 
 
 # Initialize Flask app
@@ -97,8 +104,8 @@ def get_user_credit(user_id):
     total_transaction_amount = sum(amounts)
     savings_score = (total_transaction_amount * 0.20) / total_transaction_amount * 100
     community_score = user['community_rating'] * 10
-    total_debt = user['avg_income']
-    total_income = user['current_debt']
+    total_debt = user['current_debt'] 
+    total_income = user['avg_income'] 
     debt_to_income_ratio = total_debt / total_income
     debt_to_income_score = max(0, 100 - (debt_to_income_ratio * 100))
 
@@ -124,6 +131,76 @@ def get_user_credit(user_id):
     return jsonify({
         'credit_score': final_credit_score
     })
+
+
+#community endpoints
+@app.route("/community/<user_id>/contribute", methods=["POST"])
+def contribute_to_community_endpoint(user_id):
+    """Endpoint for contributing to the community fund."""
+    data = request.json
+    amount = data["amount"]
+
+    try:
+        community = contribute_to_community(user_id, amount)
+        return jsonify({"message": "Contribution successful", "community": community}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/community/<user_id>/request_loan", methods=["POST"])
+def request_loan_endpoint(user_id):
+    """Endpoint for requesting a loan."""
+    data = request.json
+    amount = data["amount"]
+    description = data["description"]
+    credit_score = data["credit_score"]
+
+    try:
+        loan_request = request_loan(user_id, amount, description, credit_score)
+        return jsonify({"message": "Loan request created", "loan_request": loan_request}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/community/<user_id>/approve_or_deny_loan", methods=["POST"])
+def approve_or_deny_loan_endpoint(user_id):
+    """Endpoint for approving or denying a loan."""
+    data = request.json
+    loan_id = data["loan_id"]
+    approve = data.get("approve", True)
+
+    try:
+        loan = approve_or_deny_loan(user_id, loan_id, approve)
+        return jsonify({"message": "Loan decision recorded", "loan": loan}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/community/<user_id>/make_payment", methods=["POST"])
+def make_loan_payment_endpoint(user_id):
+    """Endpoint for making a loan payment."""
+    data = request.json
+    loan_id = data["loan_id"]
+    payment_amount = data["payment_amount"]
+
+    try:
+        loan = make_loan_payment(user_id, loan_id, payment_amount)
+        return jsonify({"message": "Payment successful", "loan": loan}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/community/<user_id>/withdraw", methods=["POST"])
+def withdraw_from_community_endpoint(user_id):
+    """Endpoint for withdrawing contributions from the community fund."""
+    data = request.json
+    amount = data["amount"]
+
+    try:
+        community = withdraw_from_community(user_id, amount)
+        return jsonify({"message": "Withdrawal successful", "community": community}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == '__main__':
