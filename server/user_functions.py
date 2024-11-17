@@ -13,7 +13,7 @@ def create_user(name, phone_number):
         "community_rating":0,
         "current_loans":0,
         "completed_loans":1,
-        "repayment_rate":79,
+        "repayment_rate":0.79,
         "credit_score":400,
         "avg_income":2000,
         "current_debt":0
