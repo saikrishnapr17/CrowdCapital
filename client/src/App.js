@@ -20,7 +20,7 @@ import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('my-wallet');
-  const [user_id, setUserId] = useState('20699f80-620f-4f45-ac36-5328fd4c6b9e');
+  const [user_id, setUserId] = useState('3dfc7353-b6e5-42cd-8dc4-eeb10c37a8d2');
 
   const toggleSidebar = () => {
     setSidebarOpen((prevState) => !prevState);
