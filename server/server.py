@@ -17,6 +17,7 @@ except ValueError:
 
 db = firestore.client()
 
+from fraudLLM import fraud_detection
 from user_functions import create_user, get_user_by_id, deposit_money
 from transaction_functions import create_transaction, transfer_money, get_transactions_by_user
 from community_functions import (
@@ -32,6 +33,13 @@ from community_functions import (
 CORS(app)
 
 # User Endpoints
+@app.route("/fraud", methods=["GET"])
+def fraudcheck():
+    data = request.json
+    message = data.get("message")
+    result = fraud_detection(message)
+    return jsonify(result)
+
 @app.route("/users/create", methods=["POST"])
 def create_user_endpoint():
     data = request.json
