@@ -76,12 +76,15 @@ def request_loan(user_id, amount, description, credit_score):
 
 def request_loan(user_id, amount, description, credit_score):
     """
-    Allows a user to request a loan. Only approved loans contribute to the borrower's balance.
+    Allows a user to request a loan. The loan_id is added to the user's document.
     """
-    emi = calculate_emi(amount, credit_score)  # Function to calculate EMI
+    # Calculate the EMI for the loan
+    emi = calculate_emi(amount, credit_score)
 
+    # Create loan request
+    loan_id = str(uuid.uuid4())
     loan_request = {
-        "loan_id": str(uuid.uuid4()),
+        "loan_id": loan_id,
         "user_id": user_id,
         "amount": amount,
         "description": description,
@@ -90,7 +93,7 @@ def request_loan(user_id, amount, description, credit_score):
         "status": "pending"
     }
 
-    # Add to loan requests in community fund
+    # Add the loan request to the community fund
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
 
@@ -103,12 +106,22 @@ def request_loan(user_id, amount, description, credit_score):
     if "pending_loan_requests" not in community:
         community["pending_loan_requests"] = []
     community["pending_loan_requests"].append(loan_request)
+
     community_ref.set(community)
 
-    # Add loan request to the loans collection
-    db.collection("loans").document(loan_request["loan_id"]).set(loan_request)
+    # Save the loan request in the loans collection
+    db.collection("loans").document(loan_id).set(loan_request)
+
+    # Add the loan_id to the user's document
+    user = get_user_by_id(user_id)
+    if not user:
+        raise ValueError("User not found")
+    user_loans = user.get("loan_ids", [])
+    user_loans.append(loan_id)
+    update_user(user_id, {"loan_ids": user_loans})
 
     return loan_request
+
 
 def approve_or_deny_loan(user_id, loan_id, approve=True):
     """Handles loan approval or denial."""
@@ -179,56 +192,74 @@ def get_all_pending_loans():
     return pending_loans
 
 
-def make_loan_payment(user_id, loan_id, payment_amount):
-    """Allows a borrower to make a payment against their specific loan or aggregated loan balance."""
-    community_ref = db.collection("community").document("fund")
-    community = community_ref.get().to_dict()
+def make_loan_payment(user_id, payment_amount):
+    """
+    Processes a loan payment using the user's stored loan IDs.
+    Updates both the user's loan_id list and the loan collection.
+    """
+    # Fetch the user's active loans
+    user = get_user_by_id(user_id)
+    if not user:
+        raise ValueError("User not found")
 
-    if not community or "active_loans" not in community:
-        raise ValueError("No active loans found")
-
-    # Filter active loans belonging to the user
-    user_loans = [l for l in community["active_loans"] if l["user_id"] == user_id]
-    if not user_loans:
+    user_loan_ids = user.get("loan_ids", [])
+    if not user_loan_ids:
         raise ValueError("No active loans found for the user")
 
-    # Identify the specific loan by loan_id
-    target_loan = next((loan for loan in user_loans if loan["loan_id"] == loan_id), None)
-    if not target_loan:
-        raise ValueError("Loan with the provided ID not found for the user")
+    # Retrieve loan details
+    total_loan_balance = 0
+    loans_to_update = []
 
-    # Calculate the remaining balance for the specific loan
-    remaining_balance = target_loan["amount"] - target_loan.get("paid_amount", 0)
-    if payment_amount > remaining_balance:
-        raise ValueError("Payment amount exceeds remaining balance for the loan")
+    for loan_id in user_loan_ids:
+        loan_ref = db.collection("loans").document(loan_id)
+        loan = loan_ref.get().to_dict()
+        if loan["status"] != "repaid":
+            remaining_balance = loan["amount"] - loan.get("paid_amount", 0)
+            total_loan_balance += remaining_balance
+            loans_to_update.append(loan)
 
-    # Apply payment to the specific loan
-    target_loan["paid_amount"] = target_loan.get("paid_amount", 0) + payment_amount
+    if total_loan_balance == 0:
+        raise ValueError("All loans are already repaid")
 
-    # Mark the loan as repaid if fully paid
-    if target_loan["paid_amount"] >= target_loan["amount"]:
-        target_loan["status"] = "repaid"
-        community["active_loans"].remove(target_loan)
+    if payment_amount > total_loan_balance:
+        raise ValueError("Payment amount exceeds total loan balance")
 
-    # Update loan document in Firestore
-    db.collection("loans").document(target_loan["loan_id"]).update({
-        "paid_amount": target_loan["paid_amount"],
-        "status": target_loan["status"]
-    })
+    # Distribute payment across loans
+    for loan in loans_to_update:
+        loan_ref = db.collection("loans").document(loan["loan_id"])
+        remaining_balance = loan["amount"] - loan.get("paid_amount", 0)
 
-    # Update community fund balance
+        if payment_amount <= 0:
+            break
+
+        payment_to_apply = min(payment_amount, remaining_balance)
+        loan["paid_amount"] = loan.get("paid_amount", 0) + payment_to_apply
+        payment_amount -= payment_to_apply
+
+        # Mark loan as repaid if fully paid
+        if loan["paid_amount"] >= loan["amount"]:
+            loan["status"] = "repaid"
+
+        # Update the loan document in Firestore
+        loan_ref.update({
+            "paid_amount": loan["paid_amount"],
+            "status": loan["status"]
+        })
+
+    # Update the community fund
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
     community["total_balance"] += payment_amount
     distribute_interest(payment_amount, community["contributors"])
-
     community_ref.set(community)
 
-    # Record transaction
+    # Record the payment transaction
     create_transaction(user_id, "loan_payment", payment_amount)
 
     return {
-        "message": "Payment applied successfully",
-        "updated_loan": target_loan,
-        "remaining_loans": user_loans
+        "message": "Payment successfully applied to loans",
+        "updated_loans": loans_to_update,
+        "remaining_balance": total_loan_balance - payment_amount
     }
 
 
