@@ -99,6 +99,7 @@ def get_business_investments(business_id):
 
     return business["stakeholders"]
 
+
 def get_all_business_info():
     """
     Retrieves all business information from the businesses collection,

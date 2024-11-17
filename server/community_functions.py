@@ -75,10 +75,8 @@ def request_loan(user_id, amount, description, credit_score):
     return loan_request
 
 def request_loan(user_id, amount, description, credit_score):
-    """
-    Allows a user to request a loan. EMI is calculated based on credit score.
-    """
-    emi = calculate_emi(amount, credit_score)
+    """Allows a user to request a loan."""
+    emi = calculate_emi(amount, credit_score)  # Function to calculate EMI
 
     loan_request = {
         "loan_id": str(uuid.uuid4()),
@@ -90,7 +88,7 @@ def request_loan(user_id, amount, description, credit_score):
         "status": "pending"
     }
 
-    # Add to loan requests
+    # Add to loan requests in community fund
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
 
@@ -103,14 +101,12 @@ def request_loan(user_id, amount, description, credit_score):
     if "pending_loan_requests" not in community:
         community["pending_loan_requests"] = []
     community["pending_loan_requests"].append(loan_request)
-
     community_ref.set(community)
 
-    # Add to loans collection
+    # Add loan request to the loans collection
     db.collection("loans").document(loan_request["loan_id"]).set(loan_request)
 
     return loan_request
-
 
 def approve_or_deny_loan(user_id, loan_id, approve=True):
     """Handles loan approval or denial."""
@@ -249,7 +245,7 @@ def distribute_interest(interest, contributors):
             update_user(contributor["user_id"], {"interest_earned": new_interest_earned})
 
 
-def calculate_emi(amount, credit_score, months=12):
+def calculate_emi(amount, credit_score = 700, months=12):
     """
     Calculate EMI (Equated Monthly Installment) for a loan.
     
@@ -261,21 +257,13 @@ def calculate_emi(amount, credit_score, months=12):
     Returns:
         float: The calculated EMI.
     """
-    # Define interest rates for ranges
-    base_rate = 15.0  # Starting interest rate for lowest scores
-    rate_decrease_per_range = 0.5  # Interest decreases by 0.5% per range
-    range_interval = 30  # Each range spans 30 points
-    min_credit_score = 300  # Minimum credit score (e.g., FICO score scale)
-    max_credit_score = 850  # Maximum credit score (e.g., FICO score scale)
-
-    # Calculate interest rate based on credit score range
-    if credit_score < min_credit_score:
-        interest_rate = base_rate
-    elif credit_score >= max_credit_score:
-        interest_rate = base_rate - ((max_credit_score - min_credit_score) // range_interval) * rate_decrease_per_range
+    # Determine interest rate based on credit score (example logic)
+    if credit_score >= 750:
+        interest_rate = 5.0  # Best interest rate for high credit score
+    elif credit_score >= 600:
+        interest_rate = 10.0
     else:
-        range_index = (credit_score - min_credit_score) // range_interval
-        interest_rate = base_rate - (range_index * rate_decrease_per_range)
+        interest_rate = 15.0  # Higher rate for lower credit scores
 
     # Convert annual interest rate to monthly rate
     monthly_rate = interest_rate / (12 * 100)
@@ -284,7 +272,6 @@ def calculate_emi(amount, credit_score, months=12):
     emi = (amount * monthly_rate * (1 + monthly_rate)**months) / ((1 + monthly_rate)**months - 1)
 
     return round(emi, 2)
-
 
 
 def get_community_interest():
