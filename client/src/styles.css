@@ -190,17 +190,23 @@ body {
 .back-to-dashboard-button:hover {
   background-color: #081a37;
 }
+.consistent-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .sms-fraud-check-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  width: 100%;
+  width: 100vw;
 }
 
 .sms-fraud-input-section {
-  width: 100%;
-  max-width: 700px; /* Increase max-width for more prominence */
+  width: 100vw;
+  max-width: 400vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,7 +215,8 @@ body {
 
 .sms-fraud-input {
   width: 100vw;
-  height: 500px; /* Increased height for more visibility */
+  max-width: 400px;
+  height: 250px;
   border-radius: 15px;
   background-color: #f0f4f8;
   padding: 20px;
@@ -221,7 +228,7 @@ body {
 
 .sms-fraud-check-button {
   width: 100vw;
-  max-width: 250px; /* Slightly larger button for visual balance */
+  max-width: 200px;
   padding: 15px;
   background-color: #0a1f44;
   color: white;
@@ -234,4 +241,10 @@ body {
 
 .sms-fraud-check-button:hover {
   background-color: #081a37;
+}
+
+.sms-fraud-result {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #0a1f44;
 }
