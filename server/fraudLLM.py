@@ -39,3 +39,4 @@ def fraud_detection(message):
 
     # Return the response text as JSON
     return response.text
+
