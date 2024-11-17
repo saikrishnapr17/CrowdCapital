@@ -1,4 +1,4 @@
-// components/Investments.js
+// Investments.js
 import React, { useState, useEffect } from 'react';
 import '../styles.css';
 import { Chart } from 'chart.js/auto';
@@ -42,8 +42,12 @@ function Investments({ onNavigate }) {
         <div className="investments-page">
           <div className="investments-header">
             <h2>Community Businesses</h2>
-            <button className="enlist-business-button" onClick={() => onNavigate('enlist-business')}>
-              <FaPlus /> Enlist Your Business
+            <button
+              className="business-button"
+              onClick={() => onNavigate('enlist-business')}
+              style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '20px' }}
+            >
+              <FaPlus style={{ marginRight: '8px' }} /> Enlist Your Business
             </button>
           </div>
           <div className="business-list">
@@ -91,31 +95,3 @@ function Investments({ onNavigate }) {
 }
 
 export default Investments;
-
-// Script to render the Pie Chart when the business details are opened.
-document.addEventListener('DOMContentLoaded', function () {
-  const ctx = document.getElementById('equityChart');
-  if (ctx) {
-    new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Equity Offered', 'Remaining Goal'],
-        datasets: [{
-          data: [40, 60], // Placeholder data for pie chart
-          backgroundColor: ['#6359E9', '#1d1d41'],
-          borderWidth: 0,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom',
-          }
-        }
-      }
-    });
-  }
-});
-
