@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TransactionsTable from './TransactionsTable';
 import '../styles.css';
 import { FaArrowUp, FaArrowDown, FaTimes } from 'react-icons/fa';
 
-function MyWallet({ onNavigate }) {
+function MyWallet({ onNavigate, user_id }) {
   const [isSendMoneyVisible, setIsSendMoneyVisible] = useState(false);
   const [isDepositVisible, setIsDepositVisible] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -12,6 +12,50 @@ function MyWallet({ onNavigate }) {
   const [message, setMessage] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
   const [depositMessage, setDepositMessage] = useState('');
+  const [transactions, setTransactions] = useState([]);
+  const [walletBalance, setWalletBalance] = useState('');
+
+  useEffect(() => {
+    // Fetch transactions
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/transactions/user/${user_id}`);
+        if (response.ok) {
+          const data = await response.json();
+          const formattedTransactions = data.map(transaction => ({
+            type: transaction.type,
+            date: new Date(transaction.timestamp).toLocaleDateString('en-US', {
+              weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+            }),
+            amount: transaction.type === 'deposit' ? transaction.amount : -transaction.amount,
+          }));
+          setTransactions(formattedTransactions);
+        } else {
+          console.error('Failed to fetch transactions');
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    // Fetch wallet balance
+    const fetchWalletBalance = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/wallet_balance`);
+        if (response.ok) {
+          const data = await response.json();
+          setWalletBalance(data.wallet_balance);
+        } else {
+          console.error('Failed to fetch wallet balance');
+        }
+      } catch (error) {
+        console.error('Error fetching wallet balance:', error);
+      }
+    };
+
+    fetchTransactions();
+    fetchWalletBalance();
+  }, [user_id]);
 
   const handleSendClick = () => {
     setIsSendMoneyVisible(!isSendMoneyVisible);
@@ -34,7 +78,7 @@ function MyWallet({ onNavigate }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          sender_id: 'user_id', // Replace 'user_id' with actual sender ID
+          sender_id: user_id,
           recipient_phone: phoneNumber,
           amount,
         }),
@@ -42,6 +86,16 @@ function MyWallet({ onNavigate }) {
 
       if (response.ok) {
         setMessage('Money sent successfully!');
+        setTransactions(prevTransactions => [
+          {
+            type: 'Transfer',
+            date: new Date().toLocaleDateString('en-US', {
+              weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+            }),
+            amount: amount,
+          },
+          ...prevTransactions,
+        ]);
       } else {
         setMessage('Failed to send money. Please try again.');
       }
@@ -58,7 +112,7 @@ function MyWallet({ onNavigate }) {
     setDepositMessage('');
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${phoneNumber}/deposit`, {
+      const response = await fetch(`http://localhost:5000/users/${user_id}/deposit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,6 +122,16 @@ function MyWallet({ onNavigate }) {
 
       if (response.ok) {
         setDepositMessage('Deposit successful!');
+        setTransactions(prevTransactions => [
+          {
+            type: 'deposit',
+            date: new Date().toLocaleDateString('en-US', {
+              weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+            }),
+            amount: depositAmount,
+          },
+          ...prevTransactions,
+        ]);
       } else {
         setDepositMessage('Failed to deposit. Please try again.');
       }
@@ -89,7 +153,7 @@ function MyWallet({ onNavigate }) {
       </div>
       <div className="balance-section">
         <div className="balance-card">
-          <h2>Balance: $15,595.01</h2>
+          <h2>Balance: ${walletBalance}</h2>
           <div className="wallet-actions">
             <button className="wallet-action-button" onClick={handleSendClick}>
               <FaArrowUp /> Send
@@ -163,7 +227,7 @@ function MyWallet({ onNavigate }) {
 
       <div className="wallet-transactions-section">
         <h2>Recent Transactions</h2>
-        <TransactionsTable />
+        <TransactionsTable transactions={transactions} />
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ from investment_functions import enlist_business, invest_in_business, get_busine
 CORS(app)
 
 # User Endpoints
-@app.route("/fraud", methods=["GET"])
+@app.route("/fraud", methods=["POST"])
 def fraudcheck():
     data = request.json
     message = data["message"]

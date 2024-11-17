@@ -17,10 +17,11 @@ function SMSFraudCheck({ onNavigate }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sms: smsContent }),
+        body: JSON.stringify({ message: smsContent }),
       });
       const data = await response.json();
       setResult(data);
+      console.log(data)
     } catch (error) {
       console.error('Error:', error);
     } finally {

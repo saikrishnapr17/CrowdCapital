@@ -10,10 +10,6 @@ function Sidebar({ isOpen, onNavigate }) {
         {/* Add a header if needed */}
       </div>
       <ul className="sidebar-menu">
-        <li className="sidebar-item" onClick={() => onNavigate('dashboard')}>
-          <FaHome className="sidebar-icon" />
-          <span>Dashboard</span>
-        </li>
         <li className="sidebar-item" onClick={() => onNavigate('my-wallet')}>
           <FaWallet className="sidebar-icon" />
           <span>My Wallet</span>
