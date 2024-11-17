@@ -10,6 +10,13 @@ def create_user(name, phone_number):
         "name": name,
         "phone_number": phone_number,
         "wallet_balance": 0.0,
+        "community_rating":0,
+        "current_loans":0,
+        "completed_loans":1,
+        "repayment_rate":79,
+        "credit_score":400,
+        "avg_income":2000,
+        "current_debt":0
     }
     db.collection("user").document(user_id).set(user_data)
     return user_data

@@ -9,6 +9,7 @@ function Sidebar({ isOpen, onNavigate }) {
         <li onClick={() => onNavigate('dashboard')}>Dashboard</li>
         <li onClick={() => onNavigate('investments')}>My Investments</li>
         <li onClick={() => onNavigate('my-wallet')}>My Wallet</li>
+        <li onClick={() => onNavigate('sms-fraud-check')}>SMS Fraud Check</li>
         <li onClick={() => onNavigate('accounts')}>Accounts</li>
         <li onClick={() => onNavigate('settings')}>Settings</li>
         <li onClick={() => onNavigate('security')}>Security</li>

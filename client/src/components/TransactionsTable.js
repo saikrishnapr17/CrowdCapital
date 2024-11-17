@@ -1,38 +1,33 @@
-// components/TransactionsTable.js
 import React from 'react';
+import '../styles.css';
+
+const transactions = [
+  { name: 'Adobe After Effect', date: 'Sat, 20 Apr 2020', amount: 80.09 },
+  { name: 'McDonald\'s', date: 'Fri, 19 Apr 2020', amount: -7.03 },
+  { name: 'Levi\'s', date: 'Tue, 19 Apr 2020', amount: 30.09 },
+];
 
 function TransactionsTable() {
   return (
     <div className="transactions-table">
-      <h2>Transaction</h2>
       <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Date</th>
             <th>Amount</th>
-            <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Adobe After Effect</td>
-            <td>Sat, 20 Apr 2020</td>
-            <td>$80.09</td>
-            <td>Deposited</td>
-          </tr>
-          <tr>
-            <td>McDonald's</td>
-            <td>Fri, 19 Apr 2020</td>
-            <td>$7.03</td>
-            <td>Deposited</td>
-          </tr>
-          <tr>
-            <td>Levi's</td>
-            <td>Tue, 19 Apr 2020</td>
-            <td>$30.09</td>
-            <td>Deposited</td>
-          </tr>
+          {transactions.map((transaction, index) => (
+            <tr key={index}>
+              <td>{transaction.name}</td>
+              <td>{transaction.date}</td>
+              <td style={{ color: transaction.amount > 0 ? 'green' : 'red' }}>
+                {transaction.amount > 0 ? `+${transaction.amount}` : transaction.amount}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
