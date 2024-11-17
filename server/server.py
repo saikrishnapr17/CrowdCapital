@@ -15,11 +15,10 @@ def home():
 
 @app.route('/firebase')
 def get_users():
-    users_ref = db.collection('user')  
-    docs = users_ref.stream()
-    users = {doc.id: doc.to_dict() for doc in docs}
+    user_ref = db.collection('user').document('user')  
+    doc = user_ref.get()
     
-    return jsonify(users)
+    return jsonify(doc.to_dict())
 
 
 if __name__ == '__main__':
