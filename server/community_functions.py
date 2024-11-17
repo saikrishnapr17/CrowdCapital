@@ -75,7 +75,9 @@ def request_loan(user_id, amount, description, credit_score):
     return loan_request
 
 def request_loan(user_id, amount, description, credit_score):
-    """Allows a user to request a loan."""
+    """
+    Allows a user to request a loan. Only approved loans contribute to the borrower's balance.
+    """
     emi = calculate_emi(amount, credit_score)  # Function to calculate EMI
 
     loan_request = {
@@ -177,40 +179,57 @@ def get_all_pending_loans():
     return pending_loans
 
 
-def make_loan_payment(user_id, loan_id, payment_amount):
-    """Allows a borrower to make a loan payment."""
+def make_loan_payment(user_id, payment_amount):
+    """Allows a borrower to make a payment against their aggregated loan balance."""
     community_ref = db.collection("community").document("fund")
     community = community_ref.get().to_dict()
 
     if not community or "active_loans" not in community:
         raise ValueError("No active loans found")
 
-    loan = next((l for l in community["active_loans"] if l["loan_id"] == loan_id), None)
-    if not loan:
-        raise ValueError("Active loan not found")
+    # Filter active loans belonging to the user
+    user_loans = [l for l in community["active_loans"] if l["user_id"] == user_id]
+    if not user_loans:
+        raise ValueError("No active loans found for the user")
 
-    remaining_balance = loan["amount"] - loan.get("paid_amount", 0)
-    if payment_amount > remaining_balance:
-        raise ValueError("Payment amount exceeds remaining balance")
+    # Calculate the aggregated loan balance
+    total_loan_balance = sum(loan["amount"] - loan.get("paid_amount", 0) for loan in user_loans)
+    if payment_amount > total_loan_balance:
+        raise ValueError("Payment amount exceeds total loan balance")
 
-    loan["paid_amount"] = loan.get("paid_amount", 0) + payment_amount
-    if loan["paid_amount"] >= loan["amount"]:
-        loan["status"] = "repaid"
-        community["active_loans"].remove(loan)
+    # Distribute payment across user's active loans
+    for loan in user_loans:
+        remaining_balance = loan["amount"] - loan.get("paid_amount", 0)
+        if payment_amount <= 0:
+            break
 
-    interest = payment_amount - loan["amount"] if loan["paid_amount"] >= loan["amount"] else 0.0
+        # Apply payment to this loan
+        payment_to_apply = min(payment_amount, remaining_balance)
+        loan["paid_amount"] = loan.get("paid_amount", 0) + payment_to_apply
+        payment_amount -= payment_to_apply
+
+        # Mark loan as repaid if fully paid
+        if loan["paid_amount"] >= loan["amount"]:
+            loan["status"] = "repaid"
+            community["active_loans"].remove(loan)
+
+        # Update loan document in Firestore
+        db.collection("loans").document(loan["loan_id"]).update({
+            "paid_amount": loan["paid_amount"],
+            "status": loan["status"]
+        })
+
+    # Update community fund balance
     community["total_balance"] += payment_amount
-    distribute_interest(interest, community["contributors"])
+    distribute_interest(payment_amount, community["contributors"])
 
     community_ref.set(community)
 
-    db.collection("loans").document(loan_id).update({
-        "paid_amount": loan["paid_amount"],
-        "status": loan["status"]
-    })
-
+    # Record transaction
     create_transaction(user_id, "loan_payment", payment_amount)
-    return loan
+
+    return {"message": "Payment applied successfully", "remaining_loans": user_loans}
+
 
 def withdraw_from_community(user_id, amount):
     """Allows a user to withdraw their contributions from the community fund."""
