@@ -99,11 +99,41 @@ def get_business_investments(business_id):
 
     return business["stakeholders"]
 
-def get_all_business_ids():
+
+def get_all_business_info():
     """
-    Retrieves all business IDs from the businesses collection.
+    Retrieves all business information from the businesses collection,
+    including owner and stakeholder names.
     """
     businesses_ref = db.collection("businesses")
     business_docs = businesses_ref.stream()
-    business_ids = [doc.id for doc in business_docs]
-    return {"business_ids": business_ids}
+    
+    businesses = []
+    for doc in business_docs:
+        business = doc.to_dict()
+
+        # Get owner name
+        owner = get_user_by_id(business["owner_id"])
+        business["owner_name"] = owner["name"] if owner else "Unknown Owner"
+
+        # Get stakeholder names
+        stakeholders_with_names = []
+        for stakeholder in business["stakeholders"]:
+            user = get_user_by_id(stakeholder["user_id"])
+            if user:
+                stakeholders_with_names.append({
+                    "name": user["name"],
+                    "amount_invested": stakeholder["amount_invested"],
+                    "equity": stakeholder["equity"]
+                })
+            else:
+                stakeholders_with_names.append({
+                    "name": "Unknown User",
+                    "amount_invested": stakeholder["amount_invested"],
+                    "equity": stakeholder["equity"]
+                })
+        
+        business["stakeholders"] = stakeholders_with_names
+        businesses.append(business)
+    
+    return {"businesses": businesses}
