@@ -1,11 +1,7 @@
-// TransactionsTable.js
 import React from 'react';
+import '../styles.css';
 
 function TransactionsTable({ transactions }) {
-  if (!transactions || transactions.length === 0) {
-    return <div>No transactions found</div>;
-  }
-
   return (
     <div className="transactions-table">
       <table>
@@ -21,7 +17,9 @@ function TransactionsTable({ transactions }) {
             <tr key={index}>
               <td>{transaction.type}</td>
               <td>{transaction.date}</td>
-              <td>{transaction.amount}</td>
+              <td style={{ color: transaction.amount > 0 ? 'green' : 'red' }}>
+                {transaction.amount > 0 ? `+${transaction.amount}` : transaction.amount}
+              </td>
             </tr>
           ))}
         </tbody>
