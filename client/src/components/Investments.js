@@ -50,7 +50,6 @@ function Investments() {
       {selectedBusiness !== null && (
         <div className="business-details-page">
           <div className="navbar">
-            <button className="hamburger-menu" onClick={() => alert('Toggle Sidebar')}>&#9776;</button>
             <button className="close-button" onClick={handleBackClick}>X</button>
           </div>
           <div className="details-content">
