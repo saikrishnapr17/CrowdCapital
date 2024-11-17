@@ -17,22 +17,12 @@ import LoanApproval from './components/LoanApproval';
 import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import WithdrawContribution from './components/WithdrawContribution';
 
-import './styles.css';
-=======
-import LoanApproval from './components/LoanApproval';
 import PayLoan from './components/PayLoan'; // Import the PayLoan component
-import WithdrawContribution from './components/WithdrawContribution';
->>>>>>> parent of 088f99f (4:40AM)
-
 import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('my-wallet');
-<<<<<<< HEAD
-  const [user_id,setUserId]=useState("20699f80-620f-4f45-ac36-5328fd4c6b9e")
-=======
   const [user_id,setUserId]= useState('20699f80-620f-4f45-ac36-5328fd4c6b9e')
->>>>>>> parent of 088f99f (4:40AM)
 
   const toggleSidebar = () => {
     setSidebarOpen(prevState => !prevState);
@@ -64,26 +54,16 @@ function App() {
             </div>
           </>
         )}
-<<<<<<< HEAD
-        {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange}user_id={user_id} />}
-=======
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} user_id={user_id} />}
->>>>>>> parent of 088f99f (4:40AM)
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
         {activePage === 'investments' && <Investments />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
-<<<<<<< HEAD
-        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} />}
-        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} user_id={user_id} />}
-        {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />} {/* Add EnlistBusiness page */}
-=======
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
         {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
         {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />} {/* Add PayLoan page */}
         {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} />}
 
->>>>>>> parent of 088f99f (4:40AM)
       </div>
     </div>
   );
