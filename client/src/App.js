@@ -16,7 +16,7 @@ import './styles.css';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activePage, setActivePage] = useState('dashboard');
+  const [activePage, setActivePage] = useState('my-wallet');
 
   const toggleSidebar = () => {
     setSidebarOpen(prevState => !prevState);
