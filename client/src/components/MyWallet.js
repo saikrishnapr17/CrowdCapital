@@ -16,44 +16,42 @@ function MyWallet({ onNavigate, user_id }) {
   const [walletBalance, setWalletBalance] = useState('');
   const [creditScore, setCreditScore] = useState(705); // Static value for now
 
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/transactions/user/${user_id}`);
+      if (response.ok) {
+        const data = await response.json();
+        const formattedTransactions = data.map(transaction => ({
+          type: transaction.type,
+          date: new Date(transaction.timestamp).toLocaleDateString('en-US', {
+            weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+          }),
+          amount: transaction.type === 'deposit' ? transaction.amount : -transaction.amount,
+        }));
+        setTransactions(formattedTransactions);
+      } else {
+        console.error('Failed to fetch transactions');
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/wallet_balance`);
+      if (response.ok) {
+        const data = await response.json();
+        setWalletBalance(data.wallet_balance);
+      } else {
+        console.error('Failed to fetch wallet balance');
+      }
+    } catch (error) {
+      console.error('Error fetching wallet balance:', error);
+    }
+  };
+
   useEffect(() => {
-    // Fetch transactions
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/transactions/user/${user_id}`);
-        if (response.ok) {
-          const data = await response.json();
-          const formattedTransactions = data.map(transaction => ({
-            type: transaction.type,
-            date: new Date(transaction.timestamp).toLocaleDateString('en-US', {
-              weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
-            }),
-            amount: transaction.type === 'deposit' ? transaction.amount : -transaction.amount,
-          }));
-          setTransactions(formattedTransactions);
-        } else {
-          console.error('Failed to fetch transactions');
-        }
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    };
-
-    // Fetch wallet balance
-    const fetchWalletBalance = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/wallet_balance`);
-        if (response.ok) {
-          const data = await response.json();
-          setWalletBalance(data.wallet_balance);
-        } else {
-          console.error('Failed to fetch wallet balance');
-        }
-      } catch (error) {
-        console.error('Error fetching wallet balance:', error);
-      }
-    };
-
     fetchTransactions();
     fetchWalletBalance();
   }, [user_id]);
@@ -81,22 +79,29 @@ function MyWallet({ onNavigate, user_id }) {
         body: JSON.stringify({
           sender_id: user_id,
           recipient_phone: phoneNumber,
-          amount,
+          amount: -amount,
         }),
       });
 
       if (response.ok) {
         setMessage('Money sent successfully!');
+        // Immediately update the wallet balance
+        setWalletBalance(prevBalance => (Number(prevBalance) - Number(amount)).toString());
+        // Update transactions list with the new transfer
         setTransactions(prevTransactions => [
           {
-            type: 'Transfer',
+            type: 'transfer',
             date: new Date().toLocaleDateString('en-US', {
               weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
             }),
-            amount: amount,
+            amount: -amount, // Negative amount for sends
           },
           ...prevTransactions,
         ]);
+        // Clear the form
+        setPhoneNumber('');
+        setAmount('');
+        setIsSendMoneyVisible(false);
       } else {
         setMessage('Failed to send money. Please try again.');
       }
@@ -125,6 +130,8 @@ function MyWallet({ onNavigate, user_id }) {
 
       if (response.ok) {
         setDepositMessage('Deposit successful!');
+        // Immediately update the wallet balance
+        setWalletBalance(prevBalance => (Number(prevBalance) + Number(depositAmount)).toString());
         setTransactions(prevTransactions => [
           {
             type: 'deposit',
@@ -135,6 +142,9 @@ function MyWallet({ onNavigate, user_id }) {
           },
           ...prevTransactions,
         ]);
+        // Clear the form
+        setDepositAmount('');
+        setIsDepositVisible(false);
       } else {
         setDepositMessage('Failed to deposit money. Please try again.');
       }
