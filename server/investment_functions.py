@@ -99,11 +99,18 @@ def get_business_investments(business_id):
 
     return business["stakeholders"]
 
-def get_all_business_ids():
+def get_all_business_info():
     """
-    Retrieves all business IDs from the businesses collection.
+    Retrieves all business information from the businesses collection.
     """
     businesses_ref = db.collection("businesses")
     business_docs = businesses_ref.stream()
-    business_ids = [doc.id for doc in business_docs]
-    return {"business_ids": business_ids}
+    
+    businesses = [
+        {
+            "business_id": doc.id,
+            **doc.to_dict()
+        }
+        for doc in business_docs
+    ]
+    return {"businesses": businesses}

@@ -29,7 +29,7 @@ from community_functions import (
     get_community_interest
 )
 
-from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_ids
+from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_info
 
 # Initialize Flask app
 CORS(app)
@@ -233,14 +233,15 @@ def get_community_interest_endpoint():
 
 
 # Investment Endpoints
-@app.route("/businesses", methods=["GET"])
-def get_all_business_ids_endpoint():
-    """Endpoint to retrieve all business IDs."""
+@app.route("/businesses/info", methods=["GET"])
+def get_all_business_info_endpoint():
+    """Endpoint to retrieve all business information."""
     try:
-        business_ids = get_all_business_ids()
-        return jsonify(business_ids), 200
+        business_info = get_all_business_info()
+        return jsonify(business_info), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route("/business/enlist", methods=["POST"])
