@@ -107,50 +107,84 @@ def get_users(user_id):
 
 #@app.route('/credit/<user_id>')
 def get_user_credit(user_id):
+    """
+    Calculate a user's credit score based on various factors with default values for missing or invalid data.
+    """
     transactions = get_transactions_by_user(user_id)
-    user = get_users(user_id)
+    user = get_user_by_id(user_id)  # Ensure this fetches the correct user
+    if not user:
+        raise ValueError("User not found")
+
+    # Ensure valid data for calculations
     transaction_count = len(transactions)
+    total_income = user.get('avg_income', 1)  # Default to 1 to avoid division by zero
+    total_debt = user.get('current_debt', 0)  # Default to 0
+    completed_loans = user.get('completed_loans', 0)  # Default to 0
+    repayment_rate = user.get('repayment_rate', 0) / 100  # Default to 0 and scale
+    community_rating = user.get('community_rating', 0) / 100  # Default to 0 and scale
+
+    # Transaction frequency score (max transactions per month = 30)
     max_transactions_per_month = 30
-    frequency_score = (transaction_count / max_transactions_per_month)
-    repayment_score = user['repayment_rate'] * 425 # 50% weights
+    frequency_score = min((transaction_count / max_transactions_per_month) * 100, 100)  # Capped at 100
+    frequency_score = frequency_score if frequency_score else 50  # Default to 50 if invalid
+
+    # Transaction stability score (inverse of standard deviation)
     amounts = [tx['amount'] for tx in transactions]
     if len(amounts) > 1:
-        # Calculate standard deviation of transaction amounts
         transaction_stdev = statistics.stdev(amounts)
-        # Inverse of standard deviation (scaled)
-        transaction_stability_score = (1 / (1 + transaction_stdev))
+        transaction_stability_score = max(0, (1 / (1 + transaction_stdev)) * 100)  # Capped at 100
     else:
-        transaction_stability_score = 100 
+        transaction_stability_score = 100  # Default for single transaction
+    transaction_stability_score = transaction_stability_score if transaction_stability_score else 50
+
+    # Savings score
     total_transaction_amount = sum(amounts)
-    savings_score = (total_transaction_amount * 0.20) / total_transaction_amount
-    community_score = user['community_rating'] * 10/100
-    total_debt = user['current_debt'] 
-    total_income = user['avg_income'] 
+    savings_score = (
+        (total_transaction_amount * 0.20) / max(total_transaction_amount, 1) * 100
+    )  # Default to 100 if invalid
+    savings_score = savings_score if savings_score else 50
+
+    # Debt-to-income score
     debt_to_income_ratio = total_debt / total_income
-    debt_to_income_score = max(0, 1 - (debt_to_income_ratio))
-    model_credit = prediction(total_income,user['completed_loans'])
-    print(model_credit)
+    debt_to_income_score = max(0, 100 - (debt_to_income_ratio * 100))  # Higher ratio = lower score
+    debt_to_income_score = debt_to_income_score if debt_to_income_score else 50
+
+    # Community engagement score
+    community_score = community_rating * 100  # Scaled to 0-100
+    community_score = community_score if community_score else 50
+
+    # Repayment score (based on repayment rate)
+    repayment_score = repayment_rate * 100  # Scaled to 0-100
+    repayment_score = repayment_score if repayment_score else 50
+
+    # Predictive model contribution (example function `prediction`)
+    model_credit = prediction(total_income, completed_loans)
+
+    # Define weights for components
     weights = {
-        'frequency': 42.5, # 5% weight
-        'stability': 127.5, # 15% weight
-        'savings': 85, # 10% weight
-        'community': 85, # 10% weight
-        'debt_to_income': 85 # 10% weight
+        'frequency': 5,  # 5% weight
+        'stability': 15,  # 15% weight
+        'savings': 10,  # 10% weight
+        'community': 10,  # 10% weight
+        'debt_to_income': 10,  # 10% weight
+        'repayment': 50  # 50% weight
     }
 
-    # Calculate final credit score
+    # Calculate weighted credit score
     final_credit_score = (
-        frequency_score * weights['frequency'] +
-        repayment_score +
-        transaction_stability_score * weights['stability'] +
-        savings_score * weights['savings'] +
-        community_score * weights['community'] +
-        debt_to_income_score * weights['debt_to_income']
-    )
-    
-    final_credit_score = (final_credit_score + model_credit)/2
+        (frequency_score or 50) * weights['frequency'] +
+        (transaction_stability_score or 50) * weights['stability'] +
+        (savings_score or 50) * weights['savings'] +
+        (community_score or 50) * weights['community'] +
+        (debt_to_income_score or 50) * weights['debt_to_income'] +
+        (repayment_score or 50) * weights['repayment']
+    ) / sum(weights.values())  # Normalize by total weight sum
 
-    return int(final_credit_score//1)
+    # Combine with model prediction
+    final_credit_score = (final_credit_score + model_credit) / 2
+
+    # Return credit score, capped within a valid range (e.g., 300-850)
+    return max(300, min(int(final_credit_score), 850))
 
 
 
