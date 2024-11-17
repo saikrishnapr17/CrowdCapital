@@ -82,12 +82,14 @@ body {
 }
 
 .hamburger-menu {
+  position: fixed;
+  top: 20px;
+  left: 20px;
   background: none;
   border: none;
-  color:#FFFFFF;
+  color: white;
   font-size: 24px;
   cursor: pointer;
-  z-index: 1500;
 }
 
 .navbar {
@@ -330,7 +332,7 @@ body {
   gap: 20px;  /* Increase gap between buttons */
   width: 100%;
   max-width: 400px;  /* Limit the width of the list for better appearance on larger screens */
-  padding: 0;
+  padding: 20px;
   margin: 0 auto;  /* Center the list */
 }
 
@@ -1177,6 +1179,7 @@ body {
 .enlist-business-container {
   padding: 20px;
   display: flex;
+  
   flex-direction: column;
   align-items: center;
 }
@@ -1184,20 +1187,24 @@ body {
 /* Enlist Business Card Style */
 .enlist-business-card {
   background-color: #1d1d41; /* Consistent card background color */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Shadow for a card-like appearance */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Enhanced shadow for a more prominent card-like appearance */
   max-width: 400px;
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Spacing between form elements */
+  align-self: center;
+  gap: 20px; /* Spacing between form elements */
+  margin: 0 auto; /* Center horizontally */
+  margin-left: 15px;
 }
 
 .enlist-form label {
   color: #a4a6b3; /* Light color for labels */
   font-size: 16px;
   display: flex;
+  
   flex-direction: column;
   gap: 5px; /* Space between label and input field */
 }
@@ -1333,3 +1340,102 @@ body {
   background-color: #00CFFF;
 }
 
+.loan-list-item-box {
+  background-color: #1d1d41;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px auto;
+  width: 80%;
+  text-align: left;
+  color: #ffffff;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.loan-list-item-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.loan-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loan-list-items {
+  width: 100%;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.loan-approval-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #ff4444;
+}
+
+.form-card {
+  background-color: #1d1d41;
+  border-radius: 12px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  margin: 20px;
+  color: #ffffff;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.action-button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submit {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.submit:hover {
+  background-color: #45a049;
+}
+
+.cancel {
+  background-color: #f44336;
+  color: #ffffff;
+}
+
+.cancel:hover {
+  background-color: #e53935;
+}

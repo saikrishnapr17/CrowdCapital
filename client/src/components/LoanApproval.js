@@ -84,9 +84,6 @@ function LoanApproval({ onNavigate, userId }) {
 
   return (
     <div className="loan-approval-page">
-      <div className="navbar">
-        <button className="close-button" onClick={() => onNavigate('community')}>X</button>
-      </div>
       <h2 className="page-header">Loan Approval</h2>
       {selectedLoan ? (
         <div className="form-card">
@@ -102,17 +99,19 @@ function LoanApproval({ onNavigate, userId }) {
       ) : (
         <div className="loan-list">
           <h3>Select a Loan to Approve or Deny</h3>
-          <ul className="loan-list-items">
+          <div className="loan-list-items">
             {pendingLoans.map((loan) => (
-              <li key={loan.loan_id} className="loan-list-item" onClick={() => setSelectedLoan(loan)}>
-                <p><strong>Borrower:</strong> {loan.user_name}</p>
-                <p><strong>Amount:</strong> ${loan.amount}</p>
-                <p><strong>Approval Percentage:</strong> {loan.approval_percentage.toFixed(2)}%</p>
-                <p><strong>Description:</strong> {loan.description}</p>
-                <p><strong>EMI:</strong> ${loan.emi}</p>
-              </li>
+              <div key={loan.loan_id} className="loan-list-item-box" onClick={() => setSelectedLoan(loan)}>
+                <div className="loan-list-item-content">
+                  <p><strong>Borrower:</strong> {loan.user_name}</p>
+                  <p><strong>Amount:</strong> ${loan.amount}</p>
+                  <p><strong>Approval Percentage:</strong> {loan.approval_percentage.toFixed(2)}%</p>
+                  <p><strong>Description:</strong> {loan.description}</p>
+                  <p><strong>EMI:</strong> ${loan.emi}</p>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
     </div>
