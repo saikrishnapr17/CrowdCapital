@@ -7,7 +7,7 @@ function Sidebar({ isOpen, onNavigate }) {
       <h2>uifry</h2>
       <ul>
         <li onClick={() => onNavigate('dashboard')}>Dashboard</li>
-        <li onClick={() => onNavigate('analytics')}>Analytics</li>
+        <li onClick={() => onNavigate('investments')}>My Investments</li>
         <li onClick={() => onNavigate('my-wallet')}>My Wallet</li>
         <li onClick={() => onNavigate('accounts')}>Accounts</li>
         <li onClick={() => onNavigate('settings')}>Settings</li>

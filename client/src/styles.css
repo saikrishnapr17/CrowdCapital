@@ -1,7 +1,7 @@
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #ADBBDA;
-  color: #0a1f44;
+  background-color: #141332;
+  color: #FFFFFF;
   margin: 0;
   padding: 0;
   width: 430px;
@@ -15,7 +15,7 @@ body {
 
 .sidebar {
   width: 300px; /* Sidebar width */
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
   padding: 20px;
   position: fixed;
   top: 0;
@@ -59,6 +59,7 @@ body {
 .hamburger-menu {
   background: none;
   border: none;
+  color:#FFFFFF;
   font-size: 24px;
   cursor: pointer;
   z-index: 1500;
@@ -78,13 +79,13 @@ body {
 }
 
 .dashboard-card {
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
   padding: 20px;
   border-radius: 10px;
 }
 
 .analytics-section, .transactions-section {
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -100,17 +101,17 @@ body {
 }
 
 .transactions-table th, .transactions-table td {
-  border: 1px solid #EDE8F5;
+  border: 1px solid #1d1d41;
   padding: 10px;
   text-align: left;
 }
 
 .transactions-table th {
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
 }
 
 .transactions-table td {
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
 }
 
 .overlay {
@@ -140,7 +141,7 @@ body {
 .balance-card {
   flex: 1;
   padding: 20px;
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -154,7 +155,7 @@ body {
 }
 
 .wallet-action-button {
-  background-color: #0a1f44;
+  background-color: #6359E9;
   color: #FFFFFF;
   padding: 10px 15px;
   border: none;
@@ -168,7 +169,7 @@ body {
 }
 
 .wallet-transactions-section {
-  background-color: #EDE8F5;
+  background-color: #1d1d41;
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
