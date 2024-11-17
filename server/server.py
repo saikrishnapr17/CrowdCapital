@@ -27,7 +27,8 @@ from community_functions import (
     make_loan_payment,
     withdraw_from_community,
     get_community_interest,
-    calculate_emi
+    calculate_emi,
+    get_community_fund_details
 )
 
 from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_info
@@ -153,6 +154,22 @@ def get_user_credit(user_id):
 
 
 #community endpoints
+
+@app.route("/community/fund", methods=["GET"])
+def get_community_fund():
+    """
+    Endpoint to retrieve community fund details.
+    """
+    try:
+        # Retrieve community fund details
+        community_details = get_community_fund_details()
+        return jsonify({"community_fund": community_details}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    except Exception as e:
+        return jsonify({"error": "An unexpected error occurred: " + str(e)}), 500
+
+
 @app.route("/community/<user_id>/contribute", methods=["POST"])
 def contribute_to_community_endpoint(user_id):
     """Endpoint for contributing to the community fund."""

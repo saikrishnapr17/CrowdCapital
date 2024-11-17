@@ -304,3 +304,25 @@ def get_community_interest():
             total_interest_earned += user.get("interest_earned", 0.0)
 
     return {"total_interest_earned": round(total_interest_earned, 2)}
+
+def get_community_fund_details():
+    """
+    Retrieves community fund details, including contributors, loans, and interest earned.
+    """
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community:
+        raise ValueError("Community fund does not exist")
+
+    # Calculate total interest earned by contributors
+    total_interest_earned = 0.0
+    for contributor in community.get("contributors", []):
+        user = get_user_by_id(contributor["user_id"])
+        if user:
+            total_interest_earned += user.get("interest_earned", 0.0)
+
+    # Add total interest earned to the community data
+    community["total_interest_earned"] = round(total_interest_earned, 2)
+
+    return community
