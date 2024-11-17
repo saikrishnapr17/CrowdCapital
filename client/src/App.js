@@ -6,6 +6,7 @@ import DashboardCard from './components/DashboardCard';
 import AnalyticsChart from './components/AnalyticsChart';
 import TransactionsTable from './components/TransactionsTable';
 import MyWallet from './components/MyWallet';
+import SMSFraudCheck from './components/SMSFraudCheck';
 import './styles.css';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           </>
         )}
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} />}
+        {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
       </div>
     </div>
   );
