@@ -1,0 +1,276 @@
+import uuid
+from datetime import datetime
+from firebase_admin import firestore
+from user_functions import get_user_by_id, update_user
+from transaction_functions import create_transaction
+
+db = firestore.client()
+
+def contribute_to_community(user_id, amount):
+    """Allows a user to contribute to the community fund."""
+    user = get_user_by_id(user_id)
+    if not user:
+        raise ValueError("User not found")
+    if user["wallet_balance"] < amount:
+        raise ValueError("Insufficient balance")
+
+    # Deduct from user balance
+    new_balance = user["wallet_balance"] - amount
+    update_user(user_id, {"wallet_balance": new_balance})
+
+    # Update community fund
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community:
+        community = {"total_balance": 0.0, "contributors": []}
+
+    # Update total balance
+    community["total_balance"] += amount
+
+    # Update contributor info
+    contributor = next((c for c in community["contributors"] if c["user_id"] == user_id), None)
+    if contributor:
+        contributor["amount"] += amount
+    else:
+        community["contributors"].append({"user_id": user_id, "amount": amount})
+
+    # Save to Firestore
+    community_ref.set(community)
+
+    # Record transaction
+    create_transaction(user_id, "contribution", amount)
+
+    return community
+
+def request_loan(user_id, amount, description, credit_score):
+    """Allows a user to request a loan."""
+    emi = calculate_emi(amount, credit_score)  # Function to calculate EMI
+
+    loan_request = {
+        "loan_id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "amount": amount,
+        "description": description,
+        "emi": emi,
+        "approval_percentage": 0.0,
+        "status": "pending"
+    }
+
+    # Add to loan requests
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community:
+        raise ValueError("Community fund does not exist")
+
+    if community["total_balance"] < amount:
+        raise ValueError("Requested amount exceeds available community funds")
+
+    if "pending_loan_requests" not in community:
+        community["pending_loan_requests"] = []
+    community["pending_loan_requests"].append(loan_request)
+
+    community_ref.set(community)
+    return loan_request
+
+def request_loan(user_id, amount, description, credit_score):
+    """Allows a user to request a loan."""
+    emi = calculate_emi(amount, credit_score)  # Function to calculate EMI
+
+    loan_request = {
+        "loan_id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "amount": amount,
+        "description": description,
+        "emi": emi,
+        "approval_percentage": 0.0,
+        "status": "pending"
+    }
+
+    # Add to loan requests in community fund
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community:
+        raise ValueError("Community fund does not exist")
+
+    if community["total_balance"] < amount:
+        raise ValueError("Requested amount exceeds available community funds")
+
+    if "pending_loan_requests" not in community:
+        community["pending_loan_requests"] = []
+    community["pending_loan_requests"].append(loan_request)
+    community_ref.set(community)
+
+    # Add loan request to the loans collection
+    db.collection("loans").document(loan_request["loan_id"]).set(loan_request)
+
+    return loan_request
+
+def approve_or_deny_loan(user_id, loan_id, approve=True):
+    """Handles loan approval or denial."""
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community or "pending_loan_requests" not in community:
+        raise ValueError("No pending loans found")
+
+    loan = next((l for l in community["pending_loan_requests"] if l["loan_id"] == loan_id), None)
+    if not loan:
+        raise ValueError("Loan request not found")
+
+    # Calculate approval weight
+    contributor = next((c for c in community["contributors"] if c["user_id"] == user_id), None)
+    if not contributor:
+        raise ValueError("Only contributors can vote on loans")
+
+    total_contributions = sum(c["amount"] for c in community["contributors"])
+    user_weight = (contributor["amount"] / total_contributions) * 100
+
+    if approve:
+        loan["approval_percentage"] += user_weight
+        if loan["approval_percentage"] >= 60.0:
+            # Move to active loans if approved
+            community["pending_loan_requests"].remove(loan)
+            if "active_loans" not in community:
+                community["active_loans"] = []
+            community["active_loans"].append(loan)
+            loan["status"] = "approved"
+
+            # Subtract loan amount from the community total balance
+            if community["total_balance"] >= loan["amount"]:
+                community["total_balance"] -= loan["amount"]
+            else:
+                raise ValueError("Community fund has insufficient balance for this loan")
+
+    community_ref.set(community)
+
+    # Update loan status in loans collection
+    db.collection("loans").document(loan_id).update({
+        "approval_percentage": loan["approval_percentage"],
+        "status": loan["status"]
+    })
+
+    return loan
+
+def make_loan_payment(user_id, loan_id, payment_amount):
+    """Allows a borrower to make a loan payment."""
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community or "active_loans" not in community:
+        raise ValueError("No active loans found")
+
+    loan = next((l for l in community["active_loans"] if l["loan_id"] == loan_id), None)
+    if not loan:
+        raise ValueError("Active loan not found")
+
+    # Update loan balance
+    if "paid_amount" not in loan:
+        loan["paid_amount"] = 0.0
+    loan["paid_amount"] += payment_amount
+
+    if loan["paid_amount"] >= loan["amount"]:
+        loan["status"] = "repaid"
+        community["active_loans"].remove(loan)
+
+    # Update community fund and distribute interest
+    interest = payment_amount - loan["amount"] if loan["paid_amount"] >= loan["amount"] else 0.0
+    community["total_balance"] += payment_amount
+    distribute_interest(interest, community["contributors"])  # Distribute interest proportionally
+
+    community_ref.set(community)
+
+    # Update loan record in loans collection
+    loan_update = {
+        "paid_amount": loan["paid_amount"],
+        "status": loan["status"]
+    }
+    db.collection("loans").document(loan_id).update(loan_update)
+
+    # Record transaction
+    create_transaction(user_id, "loan_payment", payment_amount)
+    return loan
+
+def withdraw_from_community(user_id, amount):
+    """Allows a user to withdraw their contributions from the community fund."""
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community:
+        raise ValueError("Community fund does not exist")
+
+    contributor = next((c for c in community["contributors"] if c["user_id"] == user_id), None)
+    if not contributor or contributor["amount"] < amount:
+        raise ValueError("Insufficient contribution balance")
+
+    # Deduct from contributor's contribution and community fund
+    contributor["amount"] -= amount
+    community["total_balance"] -= amount
+    if contributor["amount"] == 0:
+        community["contributors"].remove(contributor)
+
+    community_ref.set(community)
+
+    # Update user balance
+    user = get_user_by_id(user_id)
+    new_balance = user["wallet_balance"] + amount
+    update_user(user_id, {"wallet_balance": new_balance})
+
+    # Record transaction
+    create_transaction(user_id, "withdrawal", amount)
+    return community
+
+
+def distribute_interest(interest, contributors):
+    """
+    Distribute the earned interest proportionally among contributors.
+    Args:
+        interest (float): The total interest earned from a loan repayment.
+        contributors (list): List of contributors with their user_id and amount.
+    """
+    total_contributions = sum(c["amount"] for c in contributors)
+
+    if total_contributions == 0:
+        raise ValueError("No contributions in the community fund to distribute interest.")
+
+    # Distribute interest to each contributor proportionally
+    for contributor in contributors:
+        contribution_percentage = contributor["amount"] / total_contributions
+        interest_share = interest * contribution_percentage
+
+        # Update the contributor's interest_earned
+        user = get_user_by_id(contributor["user_id"])
+        if user:
+            new_interest_earned = user.get("interest_earned", 0.0) + interest_share
+            update_user(contributor["user_id"], {"interest_earned": new_interest_earned})
+
+
+def calculate_emi(amount, credit_score = 700, months=12):
+    """
+    Calculate EMI (Equated Monthly Installment) for a loan.
+    
+    Args:
+        amount (float): The principal loan amount.
+        credit_score (int): The borrower's credit score.
+        months (int): The repayment period in months (default is 12 months).
+
+    Returns:
+        float: The calculated EMI.
+    """
+    # Determine interest rate based on credit score (example logic)
+    if credit_score >= 750:
+        interest_rate = 5.0  # Best interest rate for high credit score
+    elif credit_score >= 600:
+        interest_rate = 10.0
+    else:
+        interest_rate = 15.0  # Higher rate for lower credit scores
+
+    # Convert annual interest rate to monthly rate
+    monthly_rate = interest_rate / (12 * 100)
+
+    # EMI formula: EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+    emi = (amount * monthly_rate * (1 + monthly_rate)**months) / ((1 + monthly_rate)**months - 1)
+
+    return round(emi, 2)
