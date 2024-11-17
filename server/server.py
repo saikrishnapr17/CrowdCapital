@@ -18,6 +18,7 @@ except ValueError:
 db = firestore.client()
 
 from fraudLLM import fraud_detection
+from credit_prediction import prediction
 from user_functions import create_user, get_user_by_id, deposit_money, get_wallet_balance
 from transaction_functions import create_transaction, transfer_money, get_transactions_by_user
 from community_functions import (
@@ -125,7 +126,8 @@ def get_user_credit(user_id):
     total_income = user['avg_income'] 
     debt_to_income_ratio = total_debt / total_income
     debt_to_income_score = max(0, 1 - (debt_to_income_ratio))
-
+    model_credit = prediction(total_income,user['completed_loans'])
+    print(model_credit)
     weights = {
         'frequency': 42.5, # 5% weight
         'stability': 127.5, # 15% weight
@@ -149,9 +151,10 @@ def get_user_credit(user_id):
     print(savings_score * weights['savings'])
     print(community_score * weights['community'])
     print(debt_to_income_score * weights['debt_to_income'])
-
+    
+    final_credit_score = (final_credit_score + model_credit)/2
     return jsonify({
-        'credit_score': final_credit_score
+        'credit_score': int(final_credit_score//1)
     })
 
 
