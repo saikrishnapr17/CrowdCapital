@@ -47,3 +47,13 @@ def deposit_money(user_id, amount):
     create_transaction(user_id, "deposit", amount)
 
     return new_balance
+
+def get_wallet_balance(user_id):
+    """
+    Retrieves the wallet balance of a user by their user ID.
+    """
+    user = get_user_by_id(user_id)
+    if not user:
+        raise ValueError("User not found")
+
+    return {"wallet_balance": user["wallet_balance"]}
