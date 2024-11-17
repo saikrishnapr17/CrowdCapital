@@ -14,6 +14,7 @@ function MyWallet({ onNavigate, user_id }) {
   const [depositMessage, setDepositMessage] = useState('');
   const [transactions, setTransactions] = useState([]);
   const [walletBalance, setWalletBalance] = useState('');
+  const [creditScore, setCreditScore] = useState(705); // Static value for now
 
   useEffect(() => {
     // Fetch transactions
@@ -107,13 +108,12 @@ function MyWallet({ onNavigate, user_id }) {
     }
   };
 
-  // Adding the handleConfirmDepositClick function
   const handleConfirmDepositClick = async () => {
     setIsSubmitting(true);
     setDepositMessage('');
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/users/user_id/deposit`, { // Replace 'user_id' with actual user ID
+      const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/deposit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,6 +168,30 @@ function MyWallet({ onNavigate, user_id }) {
         </div>
       </div>
 
+      {/* Credit Score Section */}
+      <div className="credit-score-section">
+        <div className="credit-score-card">
+          <h3 className="credit-score-header">Credit Score</h3>
+          <div className="credit-score-display">
+            <div className="credit-score-value">
+              <p>{creditScore}</p>
+              <span>Fair</span>
+            </div>
+            <div className="credit-score-meter">
+              <div
+                className="credit-score-bar"
+                style={{
+                  background: creditScore >= 720 ? '#4caf50' : creditScore >= 660 ? '#ffeb3b' : '#ff5722',
+                  width: `${((creditScore - 300) / 550) * 100}%`
+                }}
+              ></div>
+            </div>
+            <p className="credit-score-points">▲ 11 pts</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Send Money Section */}
       {isSendMoneyVisible && (
         <div className="send-money-section">
           <h3>Send Money</h3>
@@ -208,6 +232,7 @@ function MyWallet({ onNavigate, user_id }) {
         </div>
       )}
 
+      {/* Deposit Section */}
       {isDepositVisible && (
         <div className="send-money-section">
           <h3>Deposit Money</h3>
@@ -243,9 +268,12 @@ function MyWallet({ onNavigate, user_id }) {
         </div>
       )}
 
+      {/* Transactions Section */}
       <div className="wallet-transactions-section">
         <h2>Recent Transactions</h2>
-        <TransactionsTable transactions={transactions} />
+        <div className="transactions-scrollable">
+            <TransactionsTable transactions={transactions} />
+        </div>
       </div>
     </div>
   );
