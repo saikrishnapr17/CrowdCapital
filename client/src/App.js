@@ -11,10 +11,12 @@ import Investments from './components/Investments';
 import Community from './components/Community';
 import Contribute from './components/Contribute';
 import RequestLoan from './components/RequestLoan';
+import EnlistBusiness from './components/EnlistBusiness'; // Import the EnlistBusiness component
 import LoanApproval from './components/LoanApproval';
 import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import WithdrawContribution from './components/WithdrawContribution';
 
+// import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,6 +57,9 @@ function App() {
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
         {activePage === 'investments' && <Investments />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
+        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
+        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} user_id={user_id} />}
+        {/* {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />} Add EnlistBusiness page */}
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
         {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
