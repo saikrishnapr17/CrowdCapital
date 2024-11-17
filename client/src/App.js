@@ -20,7 +20,7 @@ import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('my-wallet');
-  const [user_id, setUserId] = useState('3dfc7353-b6e5-42cd-8dc4-eeb10c37a8d2');
+  const [user_id, setUserId] = useState('0eacce66-a39d-487c-9e58-e909fd4c4348');
 
   const toggleSidebar = () => {
     setSidebarOpen((prevState) => !prevState);
@@ -54,14 +54,14 @@ function App() {
         )}
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
-        {activePage === 'investments' && <Investments onNavigate={handlePageChange} />}
+        {activePage === 'investments' && <Investments onNavigate={handlePageChange} userId={user_id} />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} userId={user_id} />}
         {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />}
         {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} userId={user_id} />}
         {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} userId={user_id} />}
-        {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} />}
+        {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} userId={user_id} />}
       </div>
     </div>
   );

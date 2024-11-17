@@ -131,10 +131,13 @@ function MyWallet({ onNavigate, user_id }) {
 
     try {
       const response = await fetch(`http://127.0.0.1:5000/users/${user_id}/deposit`, {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          amount: depositAmount,
+        }),
       });
 
       if (response.ok) {
@@ -279,7 +282,6 @@ function MyWallet({ onNavigate, user_id }) {
                 }}
               ></div>
             </div>
-            <p className="credit-score-points">▲ 11 pts</p>
           </div>
         </div>
       </div>
