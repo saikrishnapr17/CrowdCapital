@@ -11,13 +11,12 @@ import Investments from './components/Investments';
 import Community from './components/Community';
 import Contribute from './components/Contribute';
 import RequestLoan from './components/RequestLoan';
-<<<<<<< HEAD
 import EnlistBusiness from './components/EnlistBusiness'; // Import the EnlistBusiness component
 import LoanApproval from './components/LoanApproval';
 import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import WithdrawContribution from './components/WithdrawContribution';
 
-import PayLoan from './components/PayLoan'; // Import the PayLoan component
+// import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import './styles.css';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

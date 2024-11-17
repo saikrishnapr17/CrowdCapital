@@ -12,11 +12,7 @@ function Investments({ onNavigate }) {
     // Fetch business list from API
     const fetchBusinesses = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/business/list');
-        if (response.ok) {
-          const data = await response.json();
-          setBusinesses(data);
-        } else {
+        else {
           console.error('Failed to fetch business list');
         }
       } catch (error) {
