@@ -154,7 +154,8 @@ def get_all_business_info():
                 stakeholders_with_names.append({
                     "name": user["name"],
                     "amount_invested": stakeholder["amount_invested"],
-                    "equity": stakeholder["equity"]
+                    "equity": stakeholder["equity"],
+                    "user_id": stakeholder["user_id"]
                 })
             else:
                 stakeholders_with_names.append({
