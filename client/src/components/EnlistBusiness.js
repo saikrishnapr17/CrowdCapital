@@ -26,7 +26,7 @@ function EnlistBusiness({ onNavigate }) {
       </div>
       <div className="enlist-business-card">
         <div className="enlist-form">
-          <label className="enlist-label">
+          <label>
             Business Name:
             <input
               type="text"
@@ -35,7 +35,7 @@ function EnlistBusiness({ onNavigate }) {
               placeholder="Enter Business Name"
             />
           </label>
-          <label className="enlist-label">
+          <label>
             Description:
             <textarea
               value={description}
@@ -43,7 +43,7 @@ function EnlistBusiness({ onNavigate }) {
               placeholder="Enter Business Description"
             />
           </label>
-          <label className="enlist-label">
+          <label>
             Goal Amount ($):
             <input
               type="number"
@@ -52,7 +52,7 @@ function EnlistBusiness({ onNavigate }) {
               placeholder="Enter Goal Amount"
             />
           </label>
-          <label className="enlist-label">
+          <label>
             Equity Offered (%):
             <input
               type="number"

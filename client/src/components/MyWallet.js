@@ -159,9 +159,6 @@ function MyWallet({ onNavigate, user_id }) {
   return (
     <div className="my-wallet-container">
       <div className="wallet-header">
-        <button onClick={() => onNavigate('dashboard')} className="close-button">
-          <FaTimes />
-        </button>
         <h1>My Wallet</h1>
       </div>
       <div className="balance-section">

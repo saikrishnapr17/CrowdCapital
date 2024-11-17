@@ -11,20 +11,19 @@ import Investments from './components/Investments';
 import Community from './components/Community';
 import Contribute from './components/Contribute';
 import RequestLoan from './components/RequestLoan';
-import EnlistBusiness from './components/EnlistBusiness'; // Import the EnlistBusiness component
+import EnlistBusiness from './components/EnlistBusiness';
 import LoanApproval from './components/LoanApproval';
-import PayLoan from './components/PayLoan'; // Import the PayLoan component
+import PayLoan from './components/PayLoan';
 import WithdrawContribution from './components/WithdrawContribution';
-
-// import PayLoan from './components/PayLoan'; // Import the PayLoan component
 import './styles.css';
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activePage, setActivePage] = useState('my-wallet');
-  const [user_id,setUserId]= useState('20699f80-620f-4f45-ac36-5328fd4c6b9e')
+  const [user_id, setUserId] = useState('20699f80-620f-4f45-ac36-5328fd4c6b9e');
 
   const toggleSidebar = () => {
-    setSidebarOpen(prevState => !prevState);
+    setSidebarOpen((prevState) => !prevState);
   };
 
   const handlePageChange = (page) => {
@@ -55,17 +54,14 @@ function App() {
         )}
         {activePage === 'my-wallet' && <MyWallet onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'sms-fraud-check' && <SMSFraudCheck onNavigate={handlePageChange} />}
-        {activePage === 'investments' && <Investments />}
+        {activePage === 'investments' && <Investments onNavigate={handlePageChange} />}
         {activePage === 'community' && <Community onNavigate={handlePageChange} />}
         {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
         {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} user_id={user_id} />}
-        {/* {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />} Add EnlistBusiness page */}
-        {activePage === 'contribute' && <Contribute onNavigate={handlePageChange} user_id={user_id} />}
-        {activePage === 'request-loan' && <RequestLoan onNavigate={handlePageChange} />}
+        {activePage === 'enlist-business' && <EnlistBusiness onNavigate={handlePageChange} />}
         {activePage === 'loan-approval' && <LoanApproval onNavigate={handlePageChange} />}
-        {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />} {/* Add PayLoan page */}
+        {activePage === 'pay-loan' && <PayLoan onNavigate={handlePageChange} />}
         {activePage === 'withdraw-contribution' && <WithdrawContribution onNavigate={handlePageChange} />}
-
       </div>
     </div>
   );
