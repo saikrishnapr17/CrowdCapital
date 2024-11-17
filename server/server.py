@@ -29,7 +29,8 @@ from community_functions import (
     withdraw_from_community,
     get_community_interest,
     calculate_emi,
-    get_community_fund_details
+    get_community_fund_details,
+    get_all_pending_loans
 )
 
 from investment_functions import enlist_business, invest_in_business, get_business_investments, get_all_business_info
@@ -216,6 +217,20 @@ def contribute_to_community_endpoint(user_id):
         return jsonify({"message": "Contribution successful", "community": community}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
+@app.route("/community/pending_loans", methods=["GET"])
+def get_pending_loans_endpoint():
+    """
+    Endpoint to retrieve all pending loan requests.
+    """
+    try:
+        pending_loans = get_all_pending_loans()
+        return jsonify({
+            "message": "Pending loans retrieved successfully",
+            "pending_loans": pending_loans
+        }), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
 
 
 @app.route("/community/<user_id>/request_loan", methods=["POST"])

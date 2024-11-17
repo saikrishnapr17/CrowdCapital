@@ -154,6 +154,19 @@ def approve_or_deny_loan(user_id, loan_id, approve=True):
 
     return loan
 
+def get_all_pending_loans():
+    """
+    Retrieves all pending loan requests from the community fund.
+    """
+    community_ref = db.collection("community").document("fund")
+    community = community_ref.get().to_dict()
+
+    if not community or "pending_loan_requests" not in community:
+        raise ValueError("No pending loans found")
+
+    return community["pending_loan_requests"]
+
+
 def make_loan_payment(user_id, loan_id, payment_amount):
     """Allows a borrower to make a loan payment."""
     community_ref = db.collection("community").document("fund")
