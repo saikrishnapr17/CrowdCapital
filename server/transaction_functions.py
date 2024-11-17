@@ -23,6 +23,7 @@ def get_transactions_by_user(user_id):
     return [t.to_dict() for t in transactions_query]
 
 def transfer_money(sender_id, recipient_phone, amount):
+    amount=int(amount)
     sender = get_user_by_id(sender_id)
     recipient = get_user_by_phone(recipient_phone)
 
